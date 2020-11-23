@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    golang日志库glog解析 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            golang日志库glog解析   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_golang.html'>#golang</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2 id="toc_0">glog简介</h2>
+
+<p>glog是著名的<a href="http://code.google.com/p/google-glog">google开源C++日志库glog</a>的golang版本，glog是一个轻量级的日志库，上手简单不需要配置文件并且稳定高效，但是可以自定义控制的内容就少了。<br/>
+glog主要有以下几个特点：</p>
+
+<ol>
+<li>glog有四种日志等级INFO &lt; WARING &lt; ERROR &lt; FATAL，不同等级的日志是打印到不同文件的，低等级的日志文件中（INFO）会包含高等级的日志信息（ERROR）</li>
+<li>通过命令行传递参数  --log_dir指定日志文件的存放目录，默认为os.TempDir()</li>
+<li>可以根据文件大小切割日志文件，但是不能根据日期切割日志文件</li>
+<li>日志输出格式是固定的(Lmmdd hh:mm:ss.uuuuuu threadid file:line] msg...)不可以自定义</li>
+<li>在程序开始时需要调用flag.Parse()解析命令行参数，在程序退出时需要调用glog.Flush() 确保将缓存区中的内容输出到文件中。</li>
+</ol>
+
+<h2 id="toc_1">使用事例</h2>
+
+<pre><code class="language-text">func main() {
+    //初始化命令行参数
+    flag.Parse()
+    
+    //退出时调用，确保日志写入文件中
+    defer glog.Flush()
+    
+    glog.Info(&quot;hello, glog&quot;)
+    glog.Warning(&quot;warning glog&quot;)
+    glog.Error(&quot;error glog&quot;)
+
+    glog.Infof(&quot;info %d&quot;, 1)
+    glog.Warningf(&quot;warning %d&quot;, 2)
+    glog.Errorf(&quot;error %d&quot;, 3)
+
+
+ }
+//假设编译后的可执行程序名为demo,运行时指定log_dir参数将日志文件保存到特定的目录
+// ./demo --log_dir=./log
+</code></pre>
+
+<h2 id="toc_2">源码分析</h2>
+
+<p>我们顺着事例代码中的 glog.Error(&quot;error glog&quot;) 这行代码来看下，来看下日志内容是如何输出到文件中去的。</p>
+
+<pre><code class="language-text">func Error(args ...interface{}) {
+    logging.print(errorLog, args...)
+}
+
+//errorLog是glog定义的日志等级标记，底层是一个int32类型的变量
+type severity int32 
+const (
+    infoLog severity = iota
+    warningLog
+    errorLog
+    fatalLog
+    numSeverity = 4
+)
+
+// Error函数实际只是做了一层简单的封装，实际调用的是loggering对象的print函数，loggering是一个loggingT类型的全局变量
+
+func (l *loggingT) print(s severity, args ...interface{}) {
+    l.printDepth(s, 1, args...)
+}
+//printDepth可以指定输出日志栈的调用层次  
+func (l *loggingT) printDepth(s severity, depth int, args ...interface{}) {
+//header构造格式化的附加信息 Lmmdd hh:mm:ss.uuuuuu threadid file:line]，glog在这个过程中做了很多优化，具体查看源码
+//header函数中会从一个freeList中取buffer对象，如果不存在则会创建新的buffer对象，在使用完后调用 putBuffer将buffer放回到freeList中
+    buf, file, line := l.header(s, depth)
+    fmt.Fprint(buf, args...)
+    if buf.Bytes()[buf.Len()-1] != &#39;\n&#39; {
+        buf.WriteByte(&#39;\n&#39;)
+    }
+    l.output(s, buf, file, line, false)
+}
+
+func (l *loggingT) output(s severity, buf *buffer, file string, line int, alsoToStderr bool) {
+    data := buf.Bytes()
+    //glog会为每个级别的日志创建不同的日志文件，打印日志时首先要保证该级别的日志文件已存在
+    if l.file[s] == nil {
+        if err := l.createFiles(s); err != nil {
+            os.Stderr.Write(data) 
+            l.exit(err)
+        }
+    }
+    //glog会将高级别的日志信息打印到低级别的日志文件中
+    //去掉代码段中的 fallthrough，则可以实现error日志只输出到error文件中，而不会继续输出到info级别的日志文件中
+    switch s {
+    case fatalLog:
+        l.file[fatalLog].Write(data)
+        fallthrough
+    case errorLog:
+        l.file[errorLog].Write(data)
+        fallthrough
+    case warningLog:
+        l.file[warningLog].Write(data)
+        fallthrough
+    case infoLog:
+        l.file[infoLog].Write(data)
+    }
+    if s == fatalLog {
+       //如果是FATAL日志信息，则退出程序
+        os.Exit(255)
+    }
+    //将使用完的buffer对象放到缓冲池中
+    l.putBuffer(buf)
+}
+
+//loggingT.file是一个flushSyncWriter接口类型的数组，在glog中实际的对象是syncBuffer，syncBuffer封装了底层的写文件操作，增加了缓冲区避免过于频繁的系统调用提高写日志效率
+type syncBuffer struct {
+    *bufio.Writer
+    file   *os.File
+    sev    severity
+    nbytes uint64 // The number of bytes written to this file
+}
+//写入日志前会判断日志文件是否已经超过指定的最大尺寸，如果超过则创建新的日志文件
+//日志内容会先写入到内存中  sb.Writer = bufio.NewWriterSize(sb.file, bufferSize)
+func (sb *syncBuffer) Write(p []byte) (n int, err error) {
+    if sb.nbytes+uint64(len(p)) &gt;= MaxSize {
+        if err := sb.rotateFile(time.Now()); err != nil {
+            sb.logger.exit(err)
+        }
+    }
+    n, err = sb.Writer.Write(p)
+    sb.nbytes += uint64(n)
+    return
+}
+
+//我们通过调用syncBuffer.Write函数将日志内容输出，但是syncBuffer缓冲区中的内容是在什么时候输出到文件中的呢
+//glog的init函数中会开启一个 goroutine定时的调用 flushSyncWriter的Flush函数将内存中的日志内容刷到文件中 
+func init() {
+    go logging.flushDaemon()
+}
+
+func (l *loggingT) flushDaemon() {
+    for _ = range time.NewTicker(flushInterval).C {
+        for s := fatalLog; s &gt;= infoLog; s-- {
+        file := l.file[s]
+        if file != nil {
+            file.Flush() 
+            file.Sync()  
+        }
+    }
+}
+
+</code></pre>
+
+<h2 id="toc_3">vlog简介</h2>
+
+<p>一般的日志库会提供日志输出级别，当日志信息的级别低于输出级别时则不会输出该日志信息。我们使用其他日志库时会使用log.Debug()打印出调试信息，在测试环境下将日志库的输出级别设置为DEBUG，调试信息就会输出便于我们查看程序的具体运行情况，而在线上程序中将日志的输出级别设置为INFO调试信息就不会输出。<br/>
+ glog则采用另外一种方式实现这种功能，glog提供让用户自定义分级信息的功能，用户自定义分级与glog自带的日志等级(INFO ERROR)是完全分离的，在命令行参数设置中独立设置“v”或“vmodule”参数来控制。</p>
+
+<pre><code class="language-text">if glog.V(1) {
+    glog.Info(&quot;Starting transaction...&quot;)
+}
+glog.V(1).Infoln(&quot;Processed&quot;, nItems, &quot;elements&quot;)
+</code></pre>
+
+<p>在测试环境下我们运行程序时指定用户自定义级别为1 (--v=1)，上面的日志信息就会输出。<br/>
+而在线上环境中指定自定义级别为0(--v=0)，上面的日志信息则不会输出。</p>
+
+<pre><code class="language-text">func init(){
+    flag.Var(&amp;logging.verbosity, &quot;v&quot;, &quot;log level for V logs&quot;)
+}
+
+type Verbose bool
+
+func V(level Level) Verbose {
+    if logging.verbosity.get() &gt;= level {
+        return Verbose(true)
+    }
+    return Verbose(false)
+}
+
+func (v Verbose) Info(args ...interface{}) {
+    if v {
+        logging.print(infoLog, args...)
+    }
+}
+</code></pre>
+
+<h2 id="toc_4">修改glog源码</h2>
+
+<p>glog有些功能与我们常用的日志库不太一样或者没有我们期望的功能，可以修改glog的源码来实现我们的需求。比如我们之前使用的日志库是有DEBUG INFO ERROR FATAL级别的，我们可以修改glog源码增加DEBUG级别，删除WARN级别，已于我们的原有系统保持一致。<br/>
+<a href="https://github.com/sdbaiguanghe/glog">具体修改内容查看github源码</a></p>
+
+<p><strong>设置等级控制日志的输出</strong><br/>
+实现原理：定义一个输出等级变量，提供接口给用户可以设置该变量的值，默认为INFO，在输出日志时检查日志信息的等级是否大于输出等级，如果大于则输出日志信息否则不输出</p>
+
+<pre><code class="language-text">var outputSeverity severity
+//outputLevel 必须为INFO ERROR等字符串，否则panic
+//SetLevelString 不是线程安全的，主要是因为我都是在程序开启时在主进程中调用一次SetLevelString函数，而不会在程序运行中随意调用
+
+func SetLevelString(outputLevel string) {
+    severity, ok := severityByName(outputLevel)
+    if !ok {
+        panic(fmt.Errorf(&quot;unknown severity name %s&quot;, outputLevel))
+    }
+    outputSeverity = severity
+}
+
+func (l *loggingT) println(s severity, args ...interface{}) {
+    if s &lt; outputSeverity {
+        return
+    }
+    buf, file, line := l.header(s, 0)
+    fmt.Fprintln(buf, args...)
+    l.output(s, buf, file, line, false)
+}
+//用户在测试环境下调用 SetLevelString(&quot;DEBUG&quot;)则调试信息能够正常输出到文件中，而在线上环境下调用SetLevelString(&quot;INFO&quot;)屏蔽调试信息
+
+</code></pre>
+
+<p><strong>每天自动切割日志文件</strong><br/>
+实现原理：在创建日志文件时记录下创建文件的日期(MMDD)，输出每条日志信息时判断当前日期与日志文件的创建日期是否一致，如果不一致则创建新的日志文件。</p>
+
+<pre><code class="language-text">    func init() {
+        flag.BoolVar(&amp;logging.dailyRolling, &quot;dailyRolling&quot;, false, &quot; weather to handle log files daily&quot;)
+    }
+    
+func (sb *syncBuffer) Write(p []byte) (n int, err error) {
+    if logging.dailyRolling {
+        if sb.createdDate != string(p[1:5]) {
+            if err := sb.rotateFile(time.Now()); err != nil {
+                sb.logger.exit(err)
+            }
+        }
+    }
+    //写日志信息
+}
+
+func (sb *syncBuffer) rotateFile(now time.Time) error {
+    sb.createdDate = fmt.Sprintf(&quot;%02d%02d&quot;, month, day)
+    //创建新的日志文件
+}
+</code></pre>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    redis字符串对象 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            redis字符串对象   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_reids.html'>#reids</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2 id="toc_0">SDS与C字符串</h2>
+
+<p>redis是一个性能优越的k-v键值对内存数据库，值可以为字符串，列表，哈希，无序集合，有序集合这五种类型。我们从最简单的字符串对象来看redis底层的实现。</p>
+
+<blockquote>
+<p>redis&gt; SET number &quot;123456&quot;<br/>
+  OK</p>
+</blockquote>
+
+<p>redis是如何保存&quot;number&quot; &quot;123456&quot; 这两个字符串对象的呢?我们当然可以使用最简单的c字符串表示方式 </p>
+
+<blockquote>
+<p>char *k = &quot;number&quot;；<br/>
+  char *v = &quot;123456&quot;；</p>
+</blockquote>
+
+<p>但是如果我们要执行 SLEN number命令时，我们需要遍历字符串&quot;123456&quot;才能知道它的长度，时间复杂度为O（N）（参见strlen函数的实现）；<br/>
+当我们执行 ADD number &quot;789&quot;命令时，我们需要重新分配足够大的内存，拼接字符串，重新赋值然后删除原有的内存，每次扩展字符串都需要分配内存是一个巨大开销，而且直接调用c语言的字符串操作函数(strcat)要特别注意缓冲区溢出的问题。<br/>
+使用c语言传统的字符串表示方式有很多不方便的地方，所以redis设计了一个新的结构SDS(simple dynamic string)来更方便的操作字符串对象，结构定义如下：</p>
+
+<pre><code class="language-text">struct sdshdr {
+    // 记录buf数组中已使用字节的数量
+    // 等于SDS所保存字符串的长度
+    int len;
+    // 记录buf数组中未使用字节的数量
+    int free;
+    // 字节数组，用于保存字符串
+    char buf[];
+};
+</code></pre>
+
+<p>当使用新的数据结构时，执行LEN命令只需要返回 sdshdr.len，时间复杂度为1。<br/>
+当扩充字符串对象的内存时，会额外多分配一些空间，等到再需要拼接字符串时，首先判断额外空间是否足够此次的拼接要求，如果满足的话直接拼接，不再需要重新分配内存了，减少了系统调用次数,典型的空间换取时间策略。<br/>
+<img src="http://7xj4dv.com1.z0.glb.clouddn.com/redis_sds_mem.jpg" alt="内存结构图"/></p>
+
+<p>SDS遵循C字符串以空字符结尾的惯例，遵循这一惯例SDS可以直接重用一部分C字符串函数库里面的函数。</p>
+
+<h2 id="toc_1">对象的类型与编码</h2>
+
+<p>Redis使用对象来表示数据库中的键和值，每次当我们在Redis中新创建一个键值对时，我们至少会创建两个对象，一个对象用作键值对的键（键对象），另一个对象用作键值对的值（值对象）。redis有字符串、链表、哈希、集合、有序集合等，为什么使用对象的概念：</p>
+
+<ul>
+<li>我们可以在执行命令前根据对象的类型来判断能否执行该命令（LLEN对象只能作用于列表，不能是其它对象）</li>
+<li>可以保存该对象的最后一次操作时间，引用计数等信息</li>
+<li><p>我们还可以针对不同的使用场景，为同一种对象设置多种不同的数据结构实现，从而优化对象在不同场景下的使用效率。<br/>
+Redis中的每个对象都由一个redisObject结构表示:</p>
+<pre><code class="language-text">typedef struct redisObject {
+//类型 常量值(REDIS_STRING,REDIS_LIST,REDIS_HASH,REDIS_SET,REDIS_ZSET)<br/>
+unsigned type:4;<br/>
+// 底层数据结构的类型<br/>
+unsigned encoding:4;<br/>
+//指向底层实现数据结构的指针<br/>
+void *ptr;<br/>
+//该对象最后一次被操作时间(空闲时间长的对象在内存紧张的情况下可能会被清除掉)<br/>
+ unsigned lru:22;<br/>
+// ...<br/>
+} robj;
+</code></pre></li>
+</ul>
+
+<h2 id="toc_2">字符串对象</h2>
+
+<p>字符串对象底层数据结构当然可以全部是SDS，但是在某些场景下SDS可能不是最优解。<br/>
+<strong>整数值</strong><br/>
+如果一个字符串对象保存的是整数值(set number 10086)，并且这个整数值可以用long类型来表示，那么字符串对象会将整数值保存在字符串对象结构的ptr属性里面（将void*转换成long），并将字符串对象的编码设置为int。想对于SDS优势在于，1.节省内存 2.对于整数值的字符串对象可能会被执行INCR操作，SDS需要先将字符串转成整形，在执行加减操作，再将结果转成字符串保存。而如果底层如果保存一个整形变量就不需要做类型转换了。<br/>
+<img src="http://7xj4dv.com1.z0.glb.clouddn.com/redis_string_int.jpg" alt=""/></p>
+
+<p><strong>长度小于32字节的字符串</strong><br/>
+如果字符串对象保存的是一个字符串值，并且这个字符串值的长度小于等于32字节，那么字符串对象将使用embstr编码的方式来保存这个字符串值。<br/>
+embstr编码是专门用于保存短字符串的一种优化编码方式，这种编码方式与raw编码(使用sdshdr结构表示)的区别在于raw编码会调用两次内存分配函数来分别创建redisObject结构和sdshdr结构，而embstr编码则通过调用一次内存分配函数来分配一块连续的空间，空间中依次包含redisObject和sdshdr两个结构，减少内存分配次数，并且所有数据都保存在一块连续的内存里面，所以这种编码的字符串对象比起raw编码的字符串对象能够更好地利用缓存带来的优势。<br/>
+<img src="http://7xj4dv.com1.z0.glb.clouddn.com/redis_string_embstr.jpg" alt=""/></p>
+
+<p>如果字符串对象保存的是一个字符串值，并且这个字符串值的长度大于32字节，那么字符串对象将使用一个简单动态字符串（SDS）来保存这个字符串值，并将对象的编码设置为raw。<br/>
+<img src="http://7xj4dv.com1.z0.glb.clouddn.com/redis_string_raw.jpg" alt=""/></p>
+
+<p>int编码的字符串对象和embstr编码的字符串对象在条件满足的情况下，会被转换为raw编码的字符串对象。<br/>
+对于int编码的字符串对象来说，如果我们向对象执行了一些命令，使得这个对象保存的不再是整数值，而是一个字符串值，那么字符串对象的编码将从int变为raw。<br/>
+embstr编码的字符串对象实际上是只读的。当我们对embstr编码的字符串对象执行任何修改命令时，程序会先将对象的编码从embstr转换成raw，然后再执行修改命令。</p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

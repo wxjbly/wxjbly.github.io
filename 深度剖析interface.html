@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    深度剖析interface - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            深度剖析interface   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_golang.html'>#golang</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2 id="toc_0">什么是interface</h2>
+
+<p>想象你要在路边打一辆出租车从A地到B地，你不需要知道出租车司机的国籍、性别，是人还是机器人，只要他能够把你从A地带到B地就可以。<br/>
+golang中的interface就是这个意思，你不要一个特定的类型，而是需要它实现你想要的功能。interface可以理解为你想要的功能集合。</p>
+
+<pre><code class="language-golang">//interface 定义你想要的功能
+ type Driver interface {
+    //能够把你从A地带到B地
+    Drive(from Location, to Location) 
+  }
+  
+//只要实现了你想要功能（Drive）的类型都满足你的要求
+  func TakeRide(from Location, to Location, driver Driver){
+    driver.Drive(from, to)
+  }
+  
+//定义两个能够Drive的类型
+  type Human struct {
+  }
+  func (p *Human) Drive(from Location, to Location){
+    //implements the drive method
+  }
+
+
+  type Robot struct {
+  }
+  func (p *Robot) Drive(from Location, to Location){
+    //implements the drive method
+  }
+
+
+  func main(){
+    var A Location
+    var B Location
+
+    var random_human_driver *Human = new(Human)
+    var random_robot_driver *Robot = new(Robot)
+
+    //不管是人还是机器人只要能够开车都能满足你的要求
+    TakeRide(A, B, random_human_driver)
+    TakeRide(A, B, random_robot_driver)
+  }
+</code></pre>
+
+<blockquote>
+<p>与C++ java等传统面向对象的语言区别在于，一个Human不需要显示声明自己能够Drive(继承自Drive接口)，只要它能够Drive(Human类型必须实现Drive函数）。<br/>
+这种”非侵入式接口“的优点在于接口的定义与类型的定义分离:</p>
+
+<ol>
+<li>定义接口变成一件很容的事，你需要什么功能就定义一个接口，只要实现了这个接口的类型都能满足要求。golang标准类库中的接口很多接口只有一个函数。</li>
+<li>定义类型的时候是要关注这个类型应该提供什么方法，不需要考虑它会用在什么地方。</li>
+</ol>
+</blockquote>
+
+<h2 id="toc_1">类型断言</h2>
+
+<pre><code class="language-text">  func TakeRide(from Location, to Location, driver Driver){
+    driver.Drive(from, to)
+  } 
+</code></pre>
+
+<p>在这个函数中driver具体是个Human还是个Robot是看不出来的，你希望司机如果是个人的话能够陪你聊聊天,怎么知道它是不是个人呢？<br/>
+使用Type Assert可以判断一个interface是不是具体的类型 </p>
+
+<p>v, ok := driver.(*Human)<br/>
+如果driver实际上确实是个Human，那么v就会指向具体的Human类型，ok也会设置为true<br/>
+如果driver实际上是个Robot，那么human就会为nil，ok也会设置为false</p>
+
+<p>这时候你又有新的要求了，希望司机如果是个人的话就陪你聊天，如果是个机器人的话就给你唱歌。<br/>
+当然可以使用上面的 Type Assert 实现，但是要写if else 代码很丑，golang中有更优雅的实现方式 Type Switches</p>
+
+<pre><code class="language-text"> switch v:= driver.(type) {
+  case *Human:
+    v.Talk()
+  case *Robot:
+      v.Sing()
+  default:
+    fmt.Println(&quot;don&#39;t know the type but it can drive&quot;)
+  }
+  
+  //当然这需要Human需要能够Talk,Robot能够Sing才可以
+   func (p *Human) Talk(){
+   fmt.Println(&quot;talk something with you&quot;)
+  }
+
+  func (p *Robot) Sing(){
+    fmt.Println(&quot;sing a song for you&quot;)
+  }
+
+</code></pre>
+
+<h2 id="toc_2">interface 具体实现</h2>
+
+<p>在go语言中会为每一种类型(Human Robot int.....)定义一个描述该类型信息的结构体，该结构体中包含这个类型所实现的所有方法。</p>
+
+<pre><code class="language-c">//MemberInfo 对应一个具体的方法，将一个方法名与方法的具体地址对应起来
+typedef struct _MemberInfo {
+     const char * tag;
+      void * addr;
+} MemberInfo;
+
+//TypeInfo 对应一个具体的类型，一个具体的类型包含一个MemberInfo数组
+typedef struct _TypeInfo { 
+    // 用于运行时取得类型信息, 比如反射机制
+     MemberInfo* members;
+} TypeInfo;
+
+//那么Human这个类型的描述i信息就可以定义为这样了
+TypeInfo  HumanTypeInfo ;
+HumanTypeInfo.members = { {&quot;Drive&quot;, &quot;Human Driver func address &quot;}, {&quot;Talk&quot;,&quot;Human Talk func address&quot;}}
+
+</code></pre>
+
+<p>同时编译器也会为每一种interface类型定义一个结构体描述该interface所包括的函数集合</p>
+
+<pre><code class="language-text"> typedef struct _InterfaceInfo {
+    // 用于运行时取得interface信息
+    const char ** tags;
+} InterfaceInfo;
+
+InterfaceInfo DriveInterfaceInfo;
+DriveInterfaceInfo.tags ={&quot;Drive&quot;}
+</code></pre>
+
+<p>定义好上诉两种meta info 以后，我们就发现很容易判断一个具体的类型是否满足一个接口了，只要找到这个类型的类型信息中所实现的方法集是否完全包含这个接口信息所定义的方法集。假如某类型有m个方法，某接口有n个方法，则很容易知道这种判定的时间复杂度为O(mXn)，不过可以使用预先排序的方式进行优化，实际的时间复杂度为O(m+n)。</p>
+
+<pre><code class="language-text">    var driver Driver
+    driver = &amp;Human{}
+    //判断下Human所实现的方法集{Drive Talk} 是否满足Driver这个Interface所定义的功能{Drive}    
+</code></pre>
+
+<p>var driver Driver <br/>
+这个driver interface变量的具体内存结构又是怎样的呢<br/>
+先来看下这个结构体的定义 </p>
+
+<pre><code class="language-text">typedef struct _IDriver {
+    IDriverTbl* tab;
+    void* data;
+} IDriver;
+
+ typedef struct _IDriverTbl {
+    InterfaceInfo* inter;
+    TypeInfo* type;
+    void (*Drive)();
+} IDriverTbl;
+
+</code></pre>
+
+<p>一个interface变量由两部分组成，一个是data，是该interface实际指向的具体类型的内存地址(<em>Human)<br/>
+一个是tab，tab中包含interface元信息(DriveInterfaceInfo)<br/>
+具体类型的元信息(HumanTypeInfo)<br/>
+以及该接口所包含的具体函数的实际地址(在这个例子中是Human的Drive函数的地址)<br/>
+因为含有具体类型的元信息所以类型断言也就能够实现了，driver.(</em>Human)只要取出driver.tab-&gt;type判断是否与*Human一致就可以了</p>
+
+<pre><code class="language-text">IDriver IHumanDriver 
+IHumanDriver.data = &amp;Human{}
+IHumanDriver.tab={&amp;DriveInterfaceInfo,&amp;HumanTypeInfo,“HumanTypeInfo中保存的Drive函数的具体地址”}
+</code></pre>
+
+<p>当调用driver.Drive()这个函数时实际上内部的代码就会变为<br/>
+IHumanDriver.tab-&gt;Drive(IHumanDriver.data) </p>
+
+<p>那么这个IHumanDriver结构体是在什么时候生成的呢？golang选择在运行时生成它，当首次遇见 driver := &amp;Human{} 这样的语句时golang会生成Driver接口对应于Human类型的IHumanDriver结构体，并将齐缓存起来。等到下在遇到driver := &amp;Human{}这样的语句是就可以从内存把IHumanDriver这个结构取出就可以用了。</p>
+
+<h2 id="toc_3">参考文献</h2>
+
+<p><a href="http://blog.csdn.net/justaipanda/article/details/43155949">深入理解interface</a><br/>
+<a href="http://www.laktek.com/2012/02/13/learning-go-interfaces-reflections/">Learning Go - Interfaces &amp; Reflections</a><br/>
+<a href="http://blog.zhaojie.me/2013/04/why-i-dont-like-go-style-interface-or-structural-typing.html">为什么我不喜欢Go语言式的接口</a></p>
+
+<p><a href="http://research.swtch.com/interfaces">Go Data Structures: Interfaces</a></p>
+
+<p>《Go语言编程》---许式伟</p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

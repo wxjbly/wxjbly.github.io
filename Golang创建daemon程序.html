@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    Golang创建daemon程序 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            Golang创建daemon程序   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_golang.html'>#golang</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2 id="toc_0">daemon的概念</h2>
+
+<p>守护进程(daemon）就是一直在后台运行的进程,它没有控制终端，无法和前台的用户交互。当我们打开一个终端时会创建一个session会话(shell),从用户登录开始到用户退出为止，这段时间内在该终端执行的进程都属于这一个会话。一个会话一般包含一个前台进程组、一个后台进程组和一个会话首进程(shell程序本身)。<br/>
+例如用以下命令启动5个进程：</p>
+
+<blockquote>
+<p>$ proc1 | proc2 &amp;</p>
+
+<p>$ proc3 | proc4 | proc5</p>
+
+<p>proc1和proc2属于同一个后台进程组，proc3、proc4、proc5属于同一个前台进程组，Shell进程本身属于一个单独的进程组。这些进程组的控制终端相同，它们属于同一个session。<br/>
+<strong>&quot;后台任务&quot;与&quot;前台任务&quot;的本质区别只有一个：是否继承标准输入。后台任务不再继承当前 session 的标准输入（stdin）,你无法向后台任务输入指令了,但是后台任务继承了标准输出（stdout）和标准错误（stderr）后台任务的所有输出依然会同步地在命令行下显示</strong></p>
+</blockquote>
+
+<p>当终端关闭或者检测到网络连接断开时会将挂断信号(SIGHUP)发送给终端控制进程（会话期首进程,shell进程）。如果会话期首进程接收到SIGHUP信号后会终止，会同时给前台进程组发送SIGHUP信号(进程接收到SIGHUP信号默认处理是退出)，shell的<strong>huponexit</strong>参数 <code>(shopt | grep huponexit)</code> 决定了shell退出时是否发送SIGHUP信号给后台进程组。</p>
+
+<h2 id="toc_1">如何实现守护进程</h2>
+
+<p>守护进程要与从启动它的父进程(一般是shell程序)的运行环境隔离开来，需要处理的内容大致包括会话、控制终端、进程组、文件描述符、文件权限掩码以及工作目录等。</p>
+
+<pre><code class="language-text">void init_daemon()
+{
+    pid_t pid;
+    int i = 0;
+// 1. 创建子进程，父进程退出,父进程退出子进程变成孤儿进程，孤儿进程由init进程(pid为1)收养
+    if ((pid = fork()) == -1) {
+        printf(&quot;Fork error !\n&quot;);
+        exit(1);
+    }
+    if (pid != 0) {
+        exit(0);        // 父进程退出
+    }
+
+// 2. 子进程调用**setsid**创建新会话,成为成为会话首进程,并且子进程成为一个新进程组的组长进程,而新的会话也脱离了控制终端的控制。
+//（组长进程调用 setsid会出错，所以第一步fork出子进程，fork出的子进程一定不会是组长进程）
+    setsid();    
+    //3. 子进程变成无终端的会话首进程，但是它仍然可以重新申请打开一个控制终端。可以通过再次创建子进程结束当前进程，使进程不再是会话首进程来禁止进程重新打开控制终端。
+    if ((pid = fork()) == -1) {
+        printf(&quot;Fork error !\n&quot;);
+        exit(-1);
+    }
+    if (pid != 0) {
+        exit(0);    
+    }
+    //4. 改变当前目录为根目录,重设文件权限掩码,关闭文件描述符
+    //因为这几样东西都是继承自父进程的
+    chdir(&quot;/tmp&quot;);      // 改变工作目录
+    umask(0);           // 重设文件掩码
+    for (; i &lt; getdtablesize(); ++i) {
+       close(i);        // 关闭打开的文件描述符
+    }
+
+    return;
+}
+
+</code></pre>
+
+<h2 id="toc_2">go语言如何实现守护进程</h2>
+
+<p>目前Go程序还不能完全实现daemon,因为go程序在启动时runtime可能会创建多个线程(用于内存管理，垃圾回收，goroutine管理等),而fork与多线程环境并不能和谐共存。 <a href="https://github.com/VividCortex/godaemon">godaemon</a>提供了一种解决方案(当然不是完美的daemon)<br/>
+代码示例：</p>
+
+<pre><code class="language-text">func main() {
+    godaemon.MakeDaemon(&amp;godaemon.DaemonAttr{})
+}
+</code></pre>
+
+<ol>
+<li>将stdin、stdout、stderr重定向到/dev/null,调用os.StartProcess()函数再次启动自身(fork 完后立即执行exec),通过设置Setsid使新开启的子进程成为一个会话首领进程，并脱离终端的控制，父进程退出。</li>
+<li>子进程再次调用StartProcess()创建孙子进程(这个过程主要是为了让孙子进程不再是会话首进程来禁止进程重新打开控制终端)</li>
+<li>孙子进程就是最终的守护进程，然后改变当前目录为根目录,重设文件权限掩码等。<br/>
+&gt; </li>
+<li><strong>程序会反复启动,在godaemon.MakeDaemon()函数之前的语句会执行多次</strong></li>
+<li><strong>通过设置环境变量__DAEMON_STAGE程序能够知道自己处在什么阶段</strong></li>
+</ol>
+
+<h2 id="toc_3">使用Supervisord</h2>
+
+<p>搞那么麻烦干嘛，直接用Supervisor啊!</p>
+
+<h2 id="toc_4">参考资料</h2>
+
+<p><a href="http://alfred-sun.github.io/blog/2015/06/18/daemon-implementation/">Linux 守护进程的实现</a><br/>
+<a href="http://wanghaibo.m.blog.chinaunix.net/uid-27105712-id-3356916.html">daemon 进程为什么要fork两次 </a><br/>
+<a href="https://github.com/VividCortex/godaemon">godaemon</a></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

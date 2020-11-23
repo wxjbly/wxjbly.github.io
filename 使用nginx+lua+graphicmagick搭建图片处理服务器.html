@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    使用nginx+lua+graphicmagick搭建图片处理服务器 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            使用nginx+lua+graphicmagick搭建图片处理服务器   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_nginx.html'>#nginx</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>使用go语言开发过图片处理服务，但是原生的image库的效率不理想，有些png、gif格式图片也不能正常处理。然后搜索解决办法时发现了nginx+lua+graphicmagick这一套解决方案，甚为满意，目前已应用到线上项目，运行稳定。<br/>
+nginx做web服务器，对于需要缩放的图片交给lua脚本，lua脚本调用外部的graphicmagick程序来处理图片，然后将处理后的图片返回,由于直接调用graphicmagick所以可能实现各种强大的功能，加文字加水印都是很简单的了。</p>
+
+<h2 id="toc_0">使用</h2>
+
+<ul>
+<li>请求的原图URL
+<a href="http://hdimage.bgh.u1.hgame.com/meinv.png">http://hdimage.bgh.u1.hgame.com/meinv.png</a>
+<strong>请求原图hdimage也会做处理，会将图片的exif信息去除,减小图片的大小，图片的质量尺寸不会变化</strong></li>
+<li>将原图等比缩放为100X100的图片
+<a href="http://hdimage.bgh.u1.hgame.com/meinv.png_100X100.png">http://hdimage.bgh.u1.hgame.com/meinv.png_100X100.png</a></li>
+<li>将原图等比缩放为100X100的图片，并将输出图片格式转为jpg
+<a href="http://hdimage.bgh.u1.hgame.com/meinv.png_100X100.jpg">http://hdimage.bgh.u1.hgame.com/meinv.png_100X100.jpg</a>
+&gt;<br/>
+对于gif图,如果请求目标图片的格式是jpg，png等非gif格式，是对其第一帧做缩放的，test.gif_100X100.jpg 是取test.gif的第一帧缩放为100X100大小。<br/>
+如果请求的目标图片格式是gif，是对整个gif做缩放，test.gif_100X100.gif返回的是缩放为100X100大小的gif图</li>
+<li>GIF 原图 
+<a href="http://hdimage.bgh.u1.hgame.com/p3_614a4dca52ad5de83c13770f8a0e2f50.gif">http://hdimage.bgh.u1.hgame.com/p3_614a4dca52ad5de83c13770f8a0e2f50.gif</a></li>
+<li>取gif的第一帧并做缩放
+<a href="http://hdimage.bgh.u1.hgame.com/p3_614a4dca52ad5de83c13770f8a0e2f50.gif_100X100.jpg">http://hdimage.bgh.u1.hgame.com/p3_614a4dca52ad5de83c13770f8a0e2f50.gif_100X100.jpg</a></li>
+<li>对整个gif图做缩放
+<a href="http://hdimage.bgh.u1.hgame.com/p3_614a4dca52ad5de83c13770f8a0e2f50.gif_100X100.gif">http://hdimage.bgh.u1.hgame.com/p3_614a4dca52ad5de83c13770f8a0e2f50.gif_100X100.gif</a></li>
+</ul>
+
+<h3 id="toc_1">裁剪方式</h3>
+
+<ul>
+<li>默认采用等比缩放的方式，并且是依照目标图片的宽度做等比缩放的</li>
+<li>可以指定特定的裁剪方式 [width]X[height]X[type]  例如meinv.png_100X100X0.png</li>
+</ul>
+
+<p><strong>具体的裁剪方式</strong></p>
+
+<p>meinv.png 原图的尺寸为643X391</p>
+
+<p><strong>默认方式（根据图片宽度等比缩小，只会缩小图片，如果请求图片尺寸大于原图不会扩大图片尺寸）</strong><br/>
+<a href="http://hdimage.bgh.u1.hgame.com/meinv.png_100X100.png">http://hdimage.bgh.u1.hgame.com/meinv.png_100X100.png</a> 返回的图片大小为 100X61</p>
+
+<p><strong>0 按照宽高缩放比小的比例进行等比缩放，保证返回的图片宽度&gt;=请求宽度，返回图片高度&gt;=请求高度</strong><br/>
+<a href="http://hdimage.bgh.u1.hgame.com/meinv.png_100X100X0.png">http://hdimage.bgh.u1.hgame.com/meinv.png_100X100X0.png</a><br/>
+返回图片大小为 164X100</p>
+
+<h2 id="toc_2">安装</h2>
+
+<ol>
+<li><p>下载安装LuaJIT</p>
+<blockquote>
+</blockquote>
+<ul>
+<li>cd /usr/local/src</li>
+<li>wget <a href="http://luajit.org/download/LuaJIT-2.0.2.tar.gz">http://luajit.org/download/LuaJIT-2.0.2.tar.gz</a></li>
+<li>tar -xzvf LuaJIT-2.0.2.tar.gz</li>
+<li>cd LuaJIT-2.0.2</li>
+<li>make</li>
+<li>make install</li>
+</ul></li>
+<li><p>下载准备nginx lua模块</p>
+<blockquote>
+</blockquote>
+<ul>
+<li>cd /usr/local/src</li>
+<li>wget <a href="https://github.com/chaoslawful/lua-nginx-module/archive/v0.8.6.tar.gz">https://github.com/chaoslawful/lua-nginx-module/archive/v0.8.6.tar.gz</a></li>
+<li>tar -xzvf v0.8.6</li>
+</ul></li>
+<li><p>安装nginx</p>
+<blockquote>
+</blockquote></li>
+<li><p>cd /usr/local/src/</p></li>
+<li><p>wget <a href="http://nginx.org/download/nginx-1.4.2.tar.gz">http://nginx.org/download/nginx-1.4.2.tar.gz</a></p></li>
+<li><p>tar -xzvf nginx-1.4.2.tar.gz</p></li>
+<li><p>cd nginx-1.4.2<br/>
+//先导入环境变量,告诉nginx去哪里找luajit</p></li>
+<li><p>export LUAJIT_LIB=/usr/local/lib</p></li>
+<li><p>export LUAJIT_INC=/usr/local/include/luajit-2.0</p></li>
+<li><p>./configure --prefix=/usr/local/nginx-1.4.2 --add-module=../lua-nginx-module-0.8.6</p></li>
+<li><p>make -j2</p></li>
+<li><p>make install</p></li>
+<li><p>安装graphicmagick</p>
+<blockquote>
+</blockquote></li>
+<li><p>yum install -y gcc libpng libjpeg libpng-devel libjpeg-devel ghostscript libtiff libtiff-devel freetype freetype-devel</p></li>
+<li><p>wget <a href="ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/1.3/GraphicsMagick-1.3.9.tar.gz">ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/1.3/GraphicsMagick-1.3.9.tar.gz</a></p></li>
+<li><p>tar zxvf GraphicsMagick-1.3.9.tar.gz</p></li>
+<li><p>cd GraphicsMagick-1.3.9</p></li>
+<li><p>./configure --enable-shared</p></li>
+<li><p>make &amp;&amp; make install</p></li>
+<li><p>下载hdimage项目，hdimage.conf为nginx的配置文件，lua.img 为lua脚本<br/>
+配置好配置文件安装完毕 </p></li>
+</ol>
+
+<h2 id="toc_3">hdimage.conf</h2>
+
+<pre><code class="language-text">server {
+    listen   80;
+    server_name    hdimage.bgh.u1.hgame.com;
+    index index.html index.htm;
+
+    access_log  /opt/log/nginx/hdimage.bgh.u1.hgame.com/access.log;
+    error_log /opt/log/nginx/hdimage.bgh.u1.hgame.com/error.log info;
+
+
+    set $root_path &#39;/opt/www/hdimage&#39;;
+    root $root_path;
+
+    location / {
+        index  index.html index.htm;
+    }
+
+    location ~* ^(.+\.(jpg|JPG|jpeg|JPEG|gif|GIF|png|PNG))_(\d+)+[xX](\d+)([!\^])?+\.(jpg|jpeg|gif|png)$ {
+        # 缩放图的根目录
+        set $thumbnail_root /tmp/thumb;
+
+        #将nginx的root设置为缩放图的根目录，因为它要从这个目录下读取文件
+        root $thumbnail_root;
+
+        # 缩放图在本地的完整路径
+        set $img_thumb_path $thumbnail_root$uri;
+
+        #如果缩略图文件存在，直接返回  如果文件不存在时才需要裁剪
+        if (!-f $img_thumb_path) {
+            # 原始图片路径，如：/document_root/1.gif
+            set $img_src_path $root_path$1;
+            set $img_src_format $2; # 原图的图片格式
+            set $img_width $3;    # 设置裁剪/缩放的宽度
+            set $img_height $4;    # 设置裁剪/缩放的高度
+            set $img_resize_type $5; # resize的方式
+            set $img_thumb_fotmat $6; #目标图片的格式
+            # 调用lua脚本，使用graphicmagick裁剪图片
+            content_by_lua_file /usr/local/nginx-1.4.2/lua/img.lua;
+        }
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+</code></pre>
+
+<h2 id="toc_4">img.lua</h2>
+
+<pre><code class="language-text">
+-- 检测路径是否目录
+local function is_dir(sPath)
+    if type(sPath) ~= &quot;string&quot; then
+        return false
+     end
+
+    local response = os.execute(&quot;cd &quot; .. sPath)
+    if response == 0 then
+        return true
+    end
+    return false
+end
+
+-- 文件是否存在
+function file_exists(name)
+    local f = io.open(name, &quot;r&quot;)
+    if f ~= nil then
+         io.close(f)
+         return true
+    else
+        return false
+    end
+end
+
+-- 获取文件路径
+function getFileDir(filename)
+    return string.match(filename, &quot;(.+)/[^/]*%.%w+$&quot;)
+end
+
+
+
+local gm_path = &#39;gm&#39;
+
+-- check image dir
+if not is_dir(getFileDir(ngx.var.img_thumb_path)) then
+    os.execute(&quot;mkdir -p &quot; .. getFileDir(ngx.var.img_thumb_path))
+end
+
+--  等比缩放
+--  gm convert /opt/www/hdimage/5243fbf2b2119313c4d3242166380cd790238d8b.jpg  -resize 600x600 +profile &quot;*&quot; /tmp/thumb/5243fbf2b2119313c4d3242166380cd790238d8b.jpg_600x600.jpg
+if (file_exists(ngx.var.img_src_path)) then
+    local cmd
+    if (ngx.var.img_src_format==&quot;gif&quot; or ngx.var.img_src_format==&quot;GIF&quot;) and ngx.var.img_thumb_fotmat ~=&quot;gif&quot; then
+      cmd = gm_path .. &#39; convert &#39; .. &#39;\&#39;&#39;..ngx.var.img_src_path..&#39;[0]&#39;..&#39;\&#39;&#39;
+      cmd = cmd ..&quot; -resize &quot;..ngx.var.img_width..&quot;x&quot; ..ngx.var.img_height..ngx.var.img_resize_type..&quot; +profile \&quot;*\&quot; &quot;..ngx.var.img_thumb_path
+    else
+      cmd = gm_path .. &#39; convert &#39; .. ngx.var.img_src_path
+      cmd = cmd ..&quot; -resize &quot;..ngx.var.img_width..&quot;x&quot; ..ngx.var.img_height..ngx.var.img_resize_type..&quot; +profile \&quot;*\&quot; &quot;..ngx.var.img_thumb_path
+    end
+    ngx.log(ngx.INFO, cmd);
+    os.execute(cmd);
+    ngx.exec(ngx.var.uri);
+else
+    ngx.exit(ngx.HTTP_NOT_FOUND);
+end
+
+</code></pre>
+
+<p>参考文献:<br/>
+<a href="https://github.com/yanue/nginx-lua-GraphicsMagick">yanue的开源项目</a><br/>
+<a href="http://book.luaer.cn/">lua程序设计</a></p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

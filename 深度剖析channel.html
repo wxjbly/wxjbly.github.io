@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    深度剖析channel - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            深度剖析channel   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_golang.html'>#golang</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <h2 id="toc_0">channel的用法</h2>
+
+<p>channel是golang中很重要的概念，配合goroutine是golang能够方便实现并发编程的关键。channel其实就是传统语言的阻塞消息队列，可以用来做不同goroutine之间的消息传递，由于goroutine是轻量级的线程能够在语言层面调度，所以channel在golang中也常被用来同步goroutine。</p>
+
+<p>一般channel的声明形式为：var chanName chan ElementType<br/>
+ElementType指定这个channel所能传递的元素类型。</p>
+
+<p>定义一个channel也很简单，直接使用内置的函数make()即可：<br/>
+ch :=  make(chan int,bufferSize) //bufferSize为缓冲区的大小，可以不传递该值代表不带缓冲区的channel </p>
+
+<h3 id="toc_1">消息传递</h3>
+
+<p>带有缓冲区的channel一般用来做不同goroutine之间的消息传递。最经典的解释莫过于生产者-消费者了。生产者向channel中写数据，如果channel缓冲区已满，则生产者会被阻塞直到消费者消费缓冲区中的数据后才能被唤醒。<br/>
+消费者从channel中读取数据，如果缓冲区中没有任何数据则消费者会阻塞直到生产者将数据写入才能被唤醒。</p>
+
+<p>假设我们有30个学生做作业，做完作业后由一个老师批改作业。用go怎么实现呢，我们首先定义一个带有缓冲区HomeWork chan(缓冲区的大小与学生数目相同，主要是为了防止学生提交作业时阻塞)，学生做完作业向hwChan中发送数据，老师等待hwChan中有数据就取出学生作业然后批改。</p>
+
+<pre><code class="language-text">    const StudentNum = 30
+    
+     type HomeWork struct {
+     }
+    
+    function student(hwChan chan HomeWork) {
+        //学生提交作业
+        hwChan &lt;- HomeWork{} 
+    }
+    
+    function teacher(hwChan chan HomeWork){
+        //老师取出30个学生的作业批改
+        for  i:=0;i&lt;StudentNum;i++ {
+            hw := &lt;- hwChan 
+        }
+    }
+
+    func main(){
+        hwChan := make(chan HomeWork,30)
+        //每个学生开启一个goroutine，学生单独做作业，做完作业提交到hwChan中即可
+        for i:=0;i&lt;StudentNum;i++ {
+            go student(hwChan)
+        }
+        //老师开启一个goroutine，去批改学生作业
+        go teacher(hwChan)
+
+        time.Sleep(5*time.Second)
+    }
+</code></pre>
+
+<p><strong>单向channel</strong><br/>
+student只需要向channel写数据，而不能从channel中读数据，但在func student(hwChan chan HomeWork) 这个函数中学生其实是有权限从channel中读数据，能限制这个函数只能取数据而不能写入数据吗？<br/>
+单向channel就是为了解决这个问题的:<br/>
+chan&lt;- ElementType  表示只能向这个channel写数据<br/>
+&lt;-chan ElementType 表示只能从这个channel中读数据</p>
+
+<p>我们将student函数的参数变一下 func student(hwChan chan&lt;- HomeWork)就可以将hwChan这个双向channel变成一个只能写的单向channel传到student函数中。<br/>
+同理teacher函数的参数变成 function teacher(hwChan &lt;-chan HomeWork)也就规定了在teacher函数内只能从这个channel中读数据。</p>
+
+<h3 id="toc_2">同步</h3>
+
+<p>main函数最后一段代码 time.Sleep(5*time.Second)，主要是为了防止main函数所在的主goroutine没有等teacher所在的goroutine批改完30个学生作业就退出了，主goroutine的退出就导致整个程序的退出。Sleep 5秒是因为教师肯定能在五秒内批改完作业，但是如果超过5s还是会有问题。<br/>
+我们现在有了新的需求，主goroutine开启了一个teacher goroutine，主goroutine需要等待teacher批改完30个学生的作业才能继续运行。这时我们就需要再创建一个channel用于goroutine之间的同步了。</p>
+
+<pre><code class="language-text">    func main(){
+        hwChan := make(chan HomeWork,30)
+        exitChan := make(chan struct{}) 
+        
+        for i:=0;i&lt;StudentNum;i++ {
+            go student(hwChan)
+        }
+        go teacher(hwChan,exitChan)
+        &lt;-exitChan
+    }
+    
+    function teacher(hwChan chan HomeWork,exitChan chan struct{}){
+        for  i:=0;i&lt;StudentNum;i++ {
+            hw := &lt;- hwChan 
+        }
+        close(exitChan)
+    }
+    
+</code></pre>
+
+<p>主goroutine会阻塞在 &lt;-exitChan，直到teacher批改完三十个学生的作业,然后close(exitChan)，&lt;-exitChan返回时teacher已批改完学生作业，程序退出也就没有任何问题了。</p>
+
+<blockquote>
+<p>至于为什么定义 exitChan为  chan struct{}而不是chan int{} 等是因为chan struct{}不需要占用任何内存空间 <br/>
+var s struct{}<br/>
+fmt.Println(unsafe.Sizeof(s)) // prints 0</p>
+</blockquote>
+
+<h2 id="toc_3">特殊状态的channel</h2>
+
+<h3 id="toc_4">未初始化的channel</h3>
+
+<pre><code class="language-text">    var ch chan int 
+    ch&lt;-1 //永远阻塞
+    &lt;- ch //永远阻塞
+    close(ch)//panic close of nil channel
+</code></pre>
+
+<p>往一个未初始化的channel中读写数据都会导致该goroutine永远阻塞。</p>
+
+<blockquote>
+<p>至于为什么要永远阻塞而不是报panic，我目前还没有找到比较信服的答案。</p>
+</blockquote>
+
+<h3 id="toc_5">已关闭的channel</h3>
+
+<ul>
+<li> 往已关闭的channel中写数据会导致panic。</li>
+<li> 关闭一个已关闭的channel会导致panic。</li>
+<li><p>从已关闭的channel中读数据不会导致panic，会返回该数据类型的零值</p>
+<pre><code class="language-text">ch :=  make(chan int)
+close(ch)<br/>
+i &lt;- ch //i =0 <br/>
+close(ch) //panic: close of closed channel
+</code></pre>
+<p>但是我们不能因为从一个channel中读出了零值就判断该channel被关闭了，因为零值也可能是正常的数据。</p>
+<pre><code class="language-text">ch :=  make(chan int)
+ch&lt;-0 //向channel中写入0 <br/>
+i &lt;- ch //虽然从channel中读出的数据是0，但不能以此判断channel已被关闭。 
+</code></pre>
+<p>从channel中读数据支持两个返回值得形式 i,ok &lt;- ch  ok是一个bool值。</p></li>
+<li><p>从已关闭的带有缓存的channel中读数据</p>
+<pre><code class="language-text">ch := make(chan int,3)
+ch &lt;-1 <br/>
+ch &lt;-0 <br/>
+ch &lt;-3<br/>
+i,ok &lt;- ch //i为1，ok为true(channel未关闭) <br/>
+close(ch)<br/>
+j,ok &lt;- ch //j是0，ok为true(channel虽然被关闭了,但是缓存中仍然有数据,j为0并不能判断出channel已关闭) <br/>
+m,ok &lt;- ch //m是3不是0，ok为true(channel虽然被关闭了,但是缓存中仍然有数据) <br/>
+n，ok &lt;-ch //n是0，ok为false (表示channel关闭并且缓冲区中没有数据了,n被赋值为该类型的零值)
+</code></pre>
+<p>在通道被关闭之后并不会立即把false作为相应接收操作的第二个结果，而是等到接收端把已在通道中的所有元素值都接收到之后才这样做。这样就保证了channel关闭之前发送到channel的数据都能够被消费端读取出来。<br/>
+读取channel中的元素还有一种更简便的方法</p>
+<pre><code class="language-text">for elem &lt;- range ch {
+}<br/>
+//当ch被关闭并且缓冲中的数据都被取出后，for循环会退出
+</code></pre></li>
+</ul>
+
+<h2 id="toc_6">源码实现</h2>
+
+<pre><code class="language-text">//一个channel其实是一个hchan变量
+type hchan struct {
+    buf      unsafe.Pointer // 指向缓冲区的指针，如果缓冲区为空则为nil
+    dataqsiz uint           // 缓冲区的大小
+
+    elemtype *_type // element type
+    elemsize uint16 //单个元素的size
+
+    //sendx recvx 实现一个FIFO的数组列表
+    sendx  uint // send index
+    recvx  uint // receive index
+    qcount uint // 缓冲区中缓冲的元素数量
+
+    recvq waitq // 消费者等待列表
+    sendq waitq // 生产者等待列表
+
+    closed uint32 //标识channel是否关闭
+    lock   mutex
+}
+//初始化一个channel 
+func makechan(t *chantype, size int64) *hchan {
+    elem := t.elem
+
+    var c *hchan
+    if size == 0 {
+        //初始化一个不带缓冲区的channel
+        c = (*hchan)(mallocgc(hchanSize+uintptr(size)*uintptr(elem.size), nil, flagNoScan))
+    } else {
+        //初始化一个带缓冲区的channel，需要创建一个数组做缓冲区
+        c = new(hchan)
+        c.buf = newarray(elem, uintptr(size))
+    }
+    c.elemsize = uint16(elem.size)
+    c.elemtype = elem
+    c.dataqsiz = uint(size)
+    return c
+}
+//往channel中写入数据
+func chansend(t *chantype, c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
+    if c == nil {
+        //往一个未初始化的channel(nil)写数据会导致goroutine永久阻塞
+        gopark(nil, nil, &quot;chan send (nil chan)&quot;, traceEvGoStop, 2)
+        throw(&quot;unreachable&quot;)
+    }
+    //加锁，所以多个gorotuine同时向一个channel中读写数据是不会有问题的
+    lock(&amp;c.lock)
+    //往一个已经关闭的channel写数据会导致panic
+    if c.closed != 0 {
+        unlock(&amp;c.lock)
+        panic(&quot;send on closed channel&quot;)
+    }
+    //根据缓冲区的大小dataqsiz,判断是否存在缓冲区
+    if c.dataqsiz == 0 {
+        //试着从recvq等待队列里取出一个等待的goroutine
+        sg := c.recvq.dequeue()
+        if sg != nil {
+            // 找到一个等待读取数据的goroutine(消费者)，将要写入的元素直接交给(拷贝)这个goroutine，然后再将这个拿到元素的goroutine给设置为ready状态
+            unlock(&amp;c.lock)
+            recvg := sg.g       //recvg指向下一个消费者
+            syncsend(c, sg, ep) //将要写入的元素直接交给(拷贝)这个消费者
+            goready(recvg, 3)
+            return true
+        }
+        // 如果recvq里，并没有一个等待的goroutine，那么就将待写入的元素保存在当前执行写的goroutine的结构里，然后将当前goroutine入队到sendq中并被挂起，等待有人来读取元素后才会被唤醒
+        mysg := acquireSudog()
+        mysg.elem = ep //生产者自己保存数据
+        c.sendq.enqueue(mysg)
+        goparkunlock(&amp;c.lock, &quot;chan send&quot;, traceEvGoBlockSend, 3)
+        unlock(&amp;c.lock)
+        return true
+    }
+
+    // 如果带有缓冲区的channel，则生产者要等待缓冲区中有空闲的空间存放生产者所生产的数据
+    // qcount是缓冲区已有数据的数量，dataqsiz是可存放数据的数量
+    for futile := byte(0); c.qcount &gt;= c.dataqsiz; futile = traceFutileWakeup {
+        //如果缓冲区没有可用空间，就将当前goroutine入队到sendq中并被挂起等待。
+        mysg := acquireSudog()
+        mysg.elem = nil
+        c.sendq.enqueue(mysg)
+        goparkunlock(&amp;c.lock, &quot;chan send&quot;, traceEvGoBlockSend|futile, 3)
+        unlock(&amp;c.lock)
+    }
+    //如果缓冲区有可用空间，就将元素追加到缓冲区中，再从消费者等待队列recvq中试着取出一个等待的goroutine开始进行读操作(如果recvq中有等待读的goroutine的话)
+    typedmemmove(c.elemtype, chanbuf(c, c.sendx), ep)
+    c.sendx++
+    if c.sendx == c.dataqsiz {
+        c.sendx = 0
+    }
+    c.qcount++
+
+    // wake up a waiting receiver
+    sg := c.recvq.dequeue()
+    if sg != nil {
+        recvg := sg.g
+        unlock(&amp;c.lock)
+        goready(recvg, 3)
+    } else {
+        unlock(&amp;c.lock)
+    }
+    return true
+}
+
+//从channel中读数据的过程和写过程差不多就不再贴代码了
+</code></pre>
+
+<h2 id="toc_7">参考资料</h2>
+
+<p>channel in Go’s runtime （skoo的博客，干货满满） <br/>
+《Go语言编程》 <br/>
+《Go并发编程实战》</p>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

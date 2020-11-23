@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    《破坏之王:_DDOS攻击与防御深度剖析》 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            《破坏之王:_DDOS攻击与防御深度剖析》   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_%E5%AE%89%E5%85%A8.html'>#安全</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <blockquote>
+<p>DoS：Denial Of Service(拒绝服务)，凡是导致合法用户不能访问服务的行为就是拒绝服务攻击<br/>
+DDoS:从多个来源，彼此协同进行的拒绝服务攻击。</p>
+</blockquote>
+
+<h2 id="toc_0">第一章 DDoS攻击的历史</h2>
+
+<ul>
+<li>探索期:个人黑客的攻击</li>
+<li>工具化:有组织的攻击</li>
+<li>武器化:网络战</li>
+<li>普及化:黑客行动主义</li>
+</ul>
+
+<h2 id="toc_1">第二章 DDos攻击的来源</h2>
+
+<ul>
+<li>僵尸网络的发展</li>
+<li>僵尸网络的组建
+<ul>
+<li>普通PC、服务器、移动设备</li>
+<li>IRC、HTTP、P2P</li>
+</ul></li>
+<li>僵尸网络的危害
+<ul>
+<li>发动DDoS攻击</li>
+<li>发送垃圾邮件</li>
+<li>窃取敏感信息</li>
+<li>抢占系统资源</li>
+</ul></li>
+<li>自愿型僵尸网络(Anonymous-匿名者)</li>
+</ul>
+
+<h2 id="toc_2">第3章 DDoS攻击的方法</h2>
+
+<ul>
+<li>DDos的精髓: 利用分布式的客户端，向服务提供者发起大量看似合法的请求，消耗或长期占用大量资源，从而达到拒绝服务的目的。</li>
+</ul>
+
+<h3 id="toc_3">3.1 攻击网络带宽资源</h3>
+
+<p><strong>利用受控主机发送大量的网络数据包，占满被攻击目标的全部带宽，从而使正常的请求无法得到及时有效的响应，造成拒绝服务。</strong></p>
+
+<h4 id="toc_4">3.1.1 直接攻击</h4>
+
+<p>使用大量的受控主机向被攻击目标发送大量的网络数据包，以占满被攻击目标的带宽，并消耗服务器和网络设备的网络数据处理能力，达到拒绝服务的目的。</p>
+
+<ul>
+<li><strong>ICMP/IGMP洪水攻击</strong>: 攻击者使用受控主机想被攻击目标发送大量的ICMP/IGMP报文，进行洪水攻击已消耗目标的带宽资源。现在使用这种方法发动的攻击已不多见，被攻击目标可以在其网络边界直接过滤并丢弃ICMP、IGMP数据包使攻击无效化。</li>
+<li><strong>UDP洪水攻击</strong> <code>小包:</code>小包指64字节大小的数据包，这是以太网传输数据帧的最小值，大量的小包会增大交换机、路由器等网络设备的压力，造成处理速度的缓慢和传输延迟等效果。<code>大包:</code>1500字节以上的数据包，能有效占用网络解耦的传输带宽，并迫使被攻击目标在接收到UDP数据包时进行分片重组，造成网络拥堵、服务器响应变慢。</li>
+</ul>
+
+<h4 id="toc_5">3.1.2 反射和放大攻击</h4>
+
+<ul>
+<li>直接攻击不仅低效，还很容易被查到攻击的源头。虽然攻击者可以使用伪造源IP地址的方式进行隐藏，但更好的方式是使用反射攻击技术。</li>
+<li>攻击者使用受控主机发送大量的数据包，其目的IP地址指向作为反射器的服务器、路由器等设施，而源IP地址则被未造成攻击目标的IP地址，反射器在收到数据包时，会认为该数据包是由被攻击目标所发来的请求，因此会将响应数据发送给被攻击目标。当大量的响应数据包涌向攻击目标时，就会耗尽目标的网络带宽资源，造成拒绝服务攻击。</li>
+<li><p>在反射器提供的网络服务协议中，需要存在请求和响应数据量不对称的情况，响应数据量需要大于请求数据量。响应数据量与请求数据量的比值越大，放大器的放大倍数也就越大，进行放大攻击所产生的消耗带宽资源的效果也就越明显。</p></li>
+<li><p><strong>ACK反射攻击:</strong>的优点主要在于其能够比较有效地隐藏攻击的来源(公网上有大量提供TCP协议的服务)。</p></li>
+<li><p><strong>DNS放大攻击:</strong> DNS响应数据包会比查询数据包大，因此攻击者利用普通的DNS查询请求就能够发动放大攻击，并将攻击流量放大2～10倍。</p></li>
+<li><p><strong>NTP放大攻击:</strong>网络时间协议（Network Time Protocol，UDP:123）是用来使计算机时间同步化的一种协议，NTP放大倍数更大，能够达到700倍以上的放大效果。</p></li>
+<li><p><strong>SNMP放大攻击</strong>简单网络管理协议（Simple Network Management Protocol，UDP:161）是目前网络中应用最为广泛的网络管理协议，它提供了一个管理框架来监控和维护互联网设备。</p></li>
+</ul>
+
+<h4 id="toc_6">3.1.3 攻击链路</h4>
+
+<p>攻击链路与前面介绍的几种攻击方法有所不同，其攻击的目标并不是作为互联网端点的服务器的带宽资源，而是骨干网上的链路的带宽资源。对链路进行攻击的一种典型的方式是Coremelt攻击。<br/>
+攻击者通过traceroute等手段来判断各个僵尸主机和将要攻击的链路之间的位置关系，并根据结果将僵尸主机分为两个部分。然后攻击者控制僵尸主机，使其与链路另一侧的每一台僵尸主机进行通信并收发大量数据，这样大量的网络数据包就会经过骨干网上的被攻击链路，造成网络拥堵和延时。<br/>
+从骨干网上来看，这些僵尸主机之间相互收发的数据包确实是真实存在的通信数据，没有办法将这些通信数据与真正的合法通信数据进行有效的区分，因此这种攻击方式更加难以防护和缓解。</p>
+
+<h3 id="toc_7">3.2 攻击系统资源</h3>
+
+<p>终端设备在与服务器进行通信时，经常是需要创建会话连接，通常会使用TCP、SSL等协议，在会话创建的初始阶段，服务器需要为新建立的连接分配资源；在会话过程中，服务器需要维护并更新连接的状态，并进行数据传输和交互；在会话结束之后，这些连接资源才会被释放。这些会话连接一旦被占满，新进入的会话请求就必须等待前面的会话完成。消耗系统资源的分布式拒绝服务攻击的主要目的就是对系统维护的连接资源进行消耗和占用，阻止正常连接的建立，从而达到拒绝服务的目的。</p>
+
+<h4 id="toc_8">3.2.1 攻击TCP连接</h4>
+
+<ul>
+<li><strong>TCP连接洪水攻击</strong> 攻击者可以利用大量受控主机，通过快速建立大量恶意的TCP连接占满被攻击目标的资源(文件句柄数、内存等)，使目标无法接受新的TCP连接请求，从而达到拒绝服务攻击的目的。</li>
+<li><strong>SYN洪水攻击</strong>是最经典的一种拒绝服务攻击方式,占据全部分布式拒绝服务攻击的三分之一以上。
+<ul>
+<li>攻击者发送大量的SYN包，服务器回应(SYN+ACK)包，但是攻击者不回应ACK包，这样的话，服务器不知道(SYN+ACK)是否发送成功，默认情况下会重试5次（<strong>tcp_synack_retries</strong>）。这样的话，对于服务器的内存，带宽都有很大的消耗</li>
+<li>在连接超时之前，半开连接会一直保存在服务器的连接表中。由于连接表的大小是有限的(<strong>tcp_max_syn_backlog</strong>)，如果在短时间内产生大量的半开连接，而这些连接又无法很快地结束，连接表就会迅速被占满，导致新的TCP连接无法建立。</li>
+</ul></li>
+<li><strong>PSH+ACK洪水攻击</strong>带有PSH标志位的TCP数据包会强制要求接收端将接收缓冲区清空并将数据提交给应用服务进行处理，因此当攻击者利用受控主机向攻击目标发送大量的PSH+ACK数据包时，被攻击目标就会消耗大量的系统资源不断地进行接收缓冲区的清空处理，导致无法正常处理数据，从而造成拒绝服务。</li>
+<li><strong>RST洪水攻击</strong>攻击者发送伪造的带有RST标志位的TCP报文，强制中断客户端与服务器的TCP连接。在伪造RST报文的过程中，服务器端的IP地址和端口号是已知的，攻击者还需要设法获得客户端的IP地址和端口号，并且使RST报文的序列号处于服务器的接收窗口之内。如果攻击者和被攻击客户端或服务器处于同一内网，这些信息可以通过欺骗和嗅探等方式获取到。
+TCP RST攻击和RST洪水攻击是针对用户的拒绝攻击方式。这种攻击通常被用来攻击在线游戏或比赛的用户，从而影响比赛的结果并获得一定的经济利益。</li>
+<li><strong>Sockstress攻击</strong> Sockstress攻击首先会完成TCP三次握手以建立TCP连接，但是在三次握手的最后一次ACK应答中，攻击者将其TCP窗口大小设置为0，随后进行一次数据请求。攻击目标在传输数据时，发现接收端的TCP窗口大小为0，就会停止传输数据，并发出TCP窗口探测包，询问攻击者其TCP窗口是否有更新。由于攻击者没有更改TCP窗口的大小，被攻击目标就会一直维持TCP连接等待数据发送，并不断进行窗口更新的探测。如果攻击者利用大量的受控主机进行Sockstress攻击，被攻击目标会一直维持大量的TCP连接并进行大量窗口更新探测，其TCP连接表会逐渐耗尽，无法接受新的连接而导致拒绝服务。
+Sockstress攻击的另一种方式是将TCP窗口设置为一个非常小的值，例如4字节。这样攻击目标将不得不把需要发送的数据切分成大量4字节大小的分片，这会极大地消耗目标的内存和处理器资源，造成系统响应缓慢和拒绝服务。</li>
+</ul>
+
+<h4 id="toc_9">3.2.2 攻击SSL连接</h4>
+
+<ul>
+<li><strong>THC SSL DoS攻击</strong>
+在进行SSL连接并握手之后，攻击者反复不断地进行密钥重新协商过程，而密钥重协商过程需要服务器投入比客户端多15倍的CPU计算资源。攻击者只需要一台普通的台式机就能够拖慢一台高性能服务器，而如果有大量主机同时进行攻击，则会使服务器忙于协商密钥而完全停止响应。</li>
+<li><strong>SSL洪水攻击</strong>
+在SSL握手的过程中，服务器会消耗较多的CPU计算资源进行加解密，并进行数据的有效性检验。对于客户端发过来的数据，服务器需要先花费大量的计算资源进行解密，之后才能对数据的有效性进行检验。重要的是，不论数据是否是有效的，服务器都必须先进行解密才能够做检查。攻击者可以利用这个特性进行SSL洪水攻击。<br/>
+对于SSL洪水攻击，比较好的方式是在数据传输之前，进行SSL握手的过程中发动攻击。攻击者并不需要完成SSL握手和密钥交换，而只需要在这个过程中让服务器去解密和验证，就能够大量地消耗服务器的计算资源，因此，攻击者可以非常容易地构造密钥交换过程中的请求数据，达到减少客户端计算量的目的。</li>
+</ul>
+
+<h3 id="toc_10">3.3 攻击应用资源</h3>
+
+<p>消耗应用资源的分布式拒绝服务攻击就是通过向应用提交大量消耗资源的请求，从而达到拒绝服务的目的。近年来，消耗应用资源的分布式拒绝服务攻击正逐渐成为拒绝服务攻击的主要手段之一。而由于DNS和Web服务的广泛性和重要性，这两种服务也就成为了消耗应用资源的分布式拒绝服务攻击的最主要的攻击目标。</p>
+
+<h4 id="toc_11">3.3.1 攻击DNS服务</h4>
+
+<ul>
+<li><strong>DNS QUERY洪水攻击</strong>是指向DNS服务器发送大量查询请求以达到拒绝服务效果的一种攻击方法。
+在DNS解析的过程中，客户端发起一次查询请求，DNS服务器可能需要进行额外的多次查询才能完成解析的过程并给出应答，在这个过程中会消耗一定的计算和网络资源。如果攻击者利用大量受控主机不断发送<strong>不同域名的解析请求</strong>，那么DNS服务器的缓存会被不断刷新，而大量解析请求不能命中缓存又导致DNS服务器必须消耗额外的资源进行迭代查询，这会极大地增加DNS服务器的资源消耗，导致DNS响应缓慢甚至完全拒绝服务。</li>
+<li><strong>DNS NXDOMAIN洪水攻击</strong>是DNS QUERY洪水攻击的一个变种攻击方式，向DNS服务器查询一个不存在的域名（NXDOMAIN即Non-eXistent Domain）。
+其缓存会被大量NXDOMAIN记录所填满，导致响应正常用户的DNS解析请求的速度变慢。DNS NXDOMIAN洪水攻击通常比DNS QUERY洪水攻击效果更好。</li>
+</ul>
+
+<h4 id="toc_12">3.3.2 攻击Web服务</h4>
+
+<ul>
+<li><p><strong>HTTP洪水攻击</strong></p>
+<ul>
+<li>攻击者利用大量的受控主机不断向web服务器发送大量恶意的HTTP请求，要求Web服务器处理，就会占用服务器大量的资源，是正常用户的访问请求处理缓慢甚至得不到处理。</li>
+<li>攻击者通常会使用HTTP代理服务器,不仅可以隐藏来源以避免被追查，还能够提高攻击的效率——攻击者连接代理服务器并发送完请求后，可以直接切断与该代理服务器的连接并开始连接下一个代理服务器。这时代理服务器与目标Web服务器的HTTP连接依然保持，Web服务器需要继续接收数据并处理HTTP请求。</li>
+<li>Web服务也存在缓存机制。如果攻击者的大量请求都命中了服务器缓存，那么这种攻击的主要作用仅体现在消耗网络带宽资源上，对于计算和IO资源的消耗是非常有限的。因此，高效的HTTP洪水攻击应不断发出针对不同资源和页面的HTTP请求，并尽可能请求无法被缓存的资源（如关键词搜索结果、用户相关资料等），从而加重服务器的负担，增强攻击效果。</li>
+<li>如果Web服务器支持HTTPS，那么进行HTTPS洪水攻击是更为有效的一种攻击方式。一方面，在进行HTTPS通信时，Web服务器需要消耗更多的资源用来进行认证和加解密；另一方面，一部分防护设备无法对HTTPS通信数据流进行处理，也会导致攻击流量绕过防护设备，直接对Web服务器造成攻击。</li>
+</ul></li>
+<li><p><strong>Slowloris攻击</strong></p>
+<ul>
+<li>在HTTP协议中规定，HTTP头部以连续的“\r\n\r\n”作为结束标志。许多Web服务器在处理HTTP请求的头部信息时，会等待头部传输结束后再进行处理。因此，如果Web服务器没有接收到连续的“\r\n\r\n”，就会一直接收数据并保持与客户端的连接。利用这个特性，攻击者能够长时间与Web服务器保持连接，并逐渐耗尽Web服务器的连接资源。</li>
+<li>攻击者在发送HTTP GET请求时，缓慢地发送无用的header字段，并且一直不发送“\r\n\r\n”结束标志，这样就能够长时间占用与Web服务器的连接并保证该连接不被超时中断。然而，Web服务器能够处理的并发连接数是有限的，如果攻击者利用大量的受控主机发送这种不完整的HTTPGET请求并持续占用这些连接，就会耗尽Web服务器的连接资源，导致其他用户的HTTP请求无法被处理，造成拒绝服务。</li>
+</ul></li>
+<li><p><strong>慢速POST请求攻击</strong></p>
+<ul>
+<li>攻击者在发送HTTP POST请求时，在请求头部中将Content-Length设置为一个很大的值（例如10000），并将HTTP BODY以非常缓慢的速度一个字节一个字节的向Web服务器发送。这样，Web服务器就需要一直维持与客户端的连接并等待数据传输结束。由于Content-Length被设置成了很大的值，而HTTP BODY的传输速度又非常缓慢，攻击者就可以长时间占用这个连接。通过间隔性地发送单字节的HTTP BODY内容，攻击者能够确保连接不因超时而导致中断。如果攻击者利用大量的受控主机发送这种缓慢的HTTP POST请求并持续占用这些连接，就会耗尽Web服务器的连接资源，导致其他用户的HTTP请求无法被处理，造成拒绝服务。</li>
+</ul></li>
+<li><p><strong>数据处理过程攻击</strong></p>
+<ul>
+<li>正则表达式拒绝服务攻击：攻击者恶意构造字符串，服务器对这些字符串做正则匹配时可能会消耗大量的CPU资源</li>
+<li>哈希冲突拒绝服务攻击：攻击者构造恶意的数据，是服务端的hash表退化成链表，造成大量的计算资源被占用。</li>
+</ul></li>
+</ul>
+
+<h3 id="toc_13">3.4 混合攻击</h3>
+
+<p>混合攻击具有更高的隐蔽性和更好的攻击效果</p>
+
+<h2 id="toc_14">第四章 DDoS攻击的工具</h2>
+
+<h3 id="toc_15">4.1 综合性工具</h3>
+
+<ul>
+<li>Hping：一个编码和解析TCP/IP协议的命令行开源工具，使用Hping可以很方便的构建DoS攻击：ICMP洪水攻击、UDP洪水攻击、SYN洪水攻击</li>
+<li>PenTBox:免费的开源安全工具套装</li>
+<li>Zarp：集多种嗅探、Dos攻击压力测试于一身</li>
+</ul>
+
+<h3 id="toc_16">4.2 压力测试工具</h3>
+
+<ul>
+<li>LOIC:</li>
+<li>HOIC</li>
+<li>HULK</li>
+</ul>
+
+<h3 id="toc_17">4.3专业攻击工具</h3>
+
+<ul>
+<li>Slowloris</li>
+<li>RUDY</li>
+<li>THC SSL DOS</li>
+</ul>
+
+<h2 id="toc_18">第五章 DDoS攻击的成本和收益</h2>
+
+<h3 id="toc_19">5.1 攻击成本</h3>
+
+<p>DDoS攻击产业化</p>
+
+<h3 id="toc_20">5.2 攻击收益</h3>
+
+<ul>
+<li>敲诈勒索</li>
+<li>实施报复</li>
+<li>获取竞争优势</li>
+</ul>
+
+<h2 id="toc_21">第六章 DDoS攻击的治理与缓解</h2>
+
+<h3 id="toc_22">6.1 攻击的治理</h3>
+
+<ul>
+<li>治理僵尸网络，切换DDoS攻击的源头，理论上来说这是对抗DDoS攻击最为有效的方案，然而1.僵尸网络不容易发现2. 僵尸网络分布在不同国家、地区。</li>
+<li>互联网服务提供商在网络出入口处的路由器上，对符合条件的数据包进行过滤:
+<ul>
+<li>从外部接口进入内部网络的数据包，但源地址属于内部网络。</li>
+<li>由内部网络向外发送的数据包，但是源地址不属于内部网络。</li>
+</ul></li>
+<li>提高DNS服务器的安全性(限制允许访问的地址范围，相应速率限制) </li>
+</ul>
+
+<h3 id="toc_23">6.2 攻击的缓解</h3>
+
+<p>DDoS缓解技术有时也称为DDoS防护技术，但是“缓解”更能体现这种技术的本质，这是因为通常它并不能彻底根除DDoS攻击对于目标的影响，而只能最大限度地减小。</p>
+
+<ul>
+<li>流量稀释：CDN Anycast </li>
+<li>流量清洗：
+<ul>
+<li>IP信誉检查</li>
+<li>攻击特征匹配</li>
+<li>速度检查与限制</li>
+<li>TCP代理和验证</li>
+<li>协议完整性验证</li>
+<li>客户端真实性验证</li>
+</ul></li>
+</ul>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    golang信号处理 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            golang信号处理   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_golang.html'>#golang</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <p>go语言中处理信号很简单，并且不会中断程序的正常运行逻辑。<br/>
+想监听一个信号只需要调用Notify函数 </p>
+
+<p><strong>func Notify(c chan&lt;- os.Signal, sig ...os.Signal)</strong></p>
+
+<ul>
+<li> sig 表示你希望监听的信号，如果不设置表示监听所有的信号。</li>
+<li> c 表示当信号发生时，系统会往该channel中写入发生的信号。</li>
+</ul>
+
+<p>如果不想监听信号则可以调用stop<br/>
+<strong>func Stop(c chan&lt;- os.Signal)</strong></p>
+
+<h2 id="toc_0">实例解析</h2>
+
+<pre><code class="language-text">exitChan := make(chan struct{})
+func main() {
+  //开启一个goroutine专门处理信号
+  go HanleSignal()
+  &lt;-exitChan
+  //释放程序占用资源，优雅退出
+}
+
+func HandleSignal() {
+    ch := make(chan os.Signal)
+    signal.Notify(ch,syscall.SIGINT,syscall.SIGTERM,syscall.SIGHUP)
+    for {
+        sig := &lt;-ch
+        fmt.Println(&quot;reveive signal&quot;, sig.String())
+        switch sig {
+        case syscall.SIGHUP:
+            // 接收到SIGHUP时可以重新加载配置
+        case syscall.SIGINT:
+            close(exitChan)
+        case syscall.SIGQUIT:
+           close(exitChan)
+        }
+    }
+}    
+</code></pre>
+
+<h2 id="toc_1">golang实现源码</h2>
+
+<pre><code class="language-text"> var handlers struct {
+ // key为信号发生时接收channel
+ //value 为channel感兴趣的信号集合（当集合中的信号发生时需要往channel中写数据）
+    m   map[chan&lt;- os.Signal]*handler
+}
+
+
+type handler struct {
+    mask [(numSig + 31) / 32]uint32
+}
+func (h *handler) want(sig int) bool {
+    return (h.mask[sig/32]&gt;&gt;uint(sig&amp;31))&amp;1 != 0
+}
+func (h *handler) set(sig int) {
+    h.mask[sig/32] |= 1 &lt;&lt; uint(sig&amp;31)
+}
+
+func Notify(c chan&lt;- os.Signal, sig ...os.Signal) {
+    h := handlers.m[c]
+    
+    add := func(n int) {
+        if !h.want(n) {
+            h.set(n)
+        }
+    }
+//sig 为空时表示监听所有的信号
+    if len(sig) == 0 {
+        for n := 0; n &lt; numSig; n++ {
+            add(n)
+        }
+    } else {
+        for _, s := range sig {
+            add(signum(s))
+        }
+    }
+}
+
+func Stop(c chan&lt;- os.Signal) {
+      h := handlers.m[c]
+      delete(handlers.m, c)
+}
+
+//信号发生时 遍历map往所有对该信号感兴趣的channel写入数据，往channel写入数据不会发生阻塞
+func process(sig os.Signal) {
+    n := signum(sig)
+    for c, h := range handlers.m {
+        if h.want(n) {
+            // send but do not block for it
+            select {
+            case c &lt;- sig:
+            default:
+            }
+        }
+    }
+}
+
+//在os/signal/signal_unix.go的init函数中开启一个goroutine监听用户感兴趣的所有信号
+func loop() {
+    for {
+        process(syscall.Signal(signal_recv()))
+    }
+}
+func init() {
+    go loop()
+}
+
+</code></pre>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>

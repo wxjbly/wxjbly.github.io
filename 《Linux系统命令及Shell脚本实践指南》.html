@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+    《Linux系统命令及Shell脚本实践指南》 - shanks
+    
+    </title>
+    
+
+    
+    
+    <link href="atom.xml" rel="alternate" title="shanks" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/style.min.css">
+    <link rel="stylesheet" href="asset/css/doc.css">
+    <script src="asset/app.js"></script>
+</head>
+  <body>
+    <section class="hero">
+      <div class="hero-head">
+          <nav class="navbar" role="navigation" aria-label="main navigation">
+              <div class="container">
+              <div class="navbar-brand">
+                
+                <a target="_self" class="navbar-item " href="index.html">Home</a>
+                
+                <a target="_self" class="navbar-item " href="archives.html">Archives</a>
+                
+                <a target="_self" class="navbar-item " href="about.html">About</a>
+                
+
+                <a role="button" id="navbarSNSRssSwitchBtn" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarSNSRssButtons">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+              </div>
+            
+              <div id="navbarSNSRssButtons" class="navbar-menu">
+                <div class="navbar-start">
+                  
+                </div>
+            
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <!--buttons start-->
+                    <div class="buttons">
+                      
+                        
+                        
+                        
+                        
+                      
+                      <a href="atom.xml" target="_blank" title="RSS">
+                          <span class="icon is-large has-text-black-bis">
+                              <svg class="svg-inline--fa fa-rss fa-w-14 fa-lg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rss" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z"></path></svg><!-- <i class="fas fa-rss fa-lg"></i> -->
+                          </span>
+                      </a>
+                    </div>
+                    <!--buttons end-->
+
+                  </div>
+                </div>
+                </div>
+              </div>
+            </nav>
+      </div>
+
+ <div class="hero-body ct-body"></div>
+      
+    </section>
+    <section class="ct-body">
+      <div class="container">
+          <div class="columns is-variable bd-klmn-columns is-4 is-centered">
+              <div class="column is-four-fifths">
+                  <div class="post-body single-content">
+                    
+                    <h1 class="title">
+                            《Linux系统命令及Shell脚本实践指南》   
+                      </h1>
+                     
+                    
+                      <div class="media">
+                            
+                            <div class="media-content">
+                              <div class="content">
+                                <p>
+                                 <span class="date">2020/11/14</span>
+                                  
+                                         
+                                  
+
+                                   
+                                      
+                                  <br />
+                                  <span class="tran-tags">Tags:</span>&nbsp;
+                                  
+                                    <a class="tag is-link is-light" href='tag_linux.html'>#linux</a>
+                                     
+
+                                </p>
+                              </div>
+                            </div>
+                         
+                    </div>
+                </div>
+                  <article class="markdown-body single-content">
+                    <blockquote>
+<p>本文为<a href="https://book.douban.com/subject/25803528/">《Linux系统命令及Shell脚本实践指南》</a>一书的摘要。</p>
+</blockquote>
+
+<h2 id="toc_0">第1章 Linux简介</h2>
+
+<ul>
+<li>什么是交换分区？交换分区是一个特殊的分区，它的作用相当于Windows下的虚拟内存，这个分区的大小一般设置为物理内存的两倍，但是不管物理内存有多大，交换分区建议不要超过8GB，因为大于8GB的交换分区其实并没有多大实际意义。</li>
+<li>使用 <code>man cmd</code> <code>info cmd</code> 来查询cmd命令的说明文档</li>
+<li>计算机的启动过程
+<ul>
+<li>通过后计算机会加载BIOS(主板制造商开发适合自己主板的BIOS), BIOS对自身的硬件做一次健康检查，只有硬件没有问题，才能运行软件.</li>
+<li>BIOS默认会从硬盘上的第0柱面、第0磁道、第一个扇区中读取被称为MBR的512字节大小的数据，即主引导记录。其中引导程序部分占用446字节，另外64字节是磁盘分区表DPT，最后两字节是MBR的结束位。这512字节的空间内容是由专门的分区程序产生的，比如说Windows下的fdisk.exe，或者Linux下的fdisk命令，所以它不依赖于任何操作系统，所以可以利用这个特性实现多操作系统共存。</li>
+<li>常见的方式是在MBR中写入Grub的地址，这样系统实际会载入Grub作为操作系统的引导程序。</li>
+<li>Grub最重要的功能就是根据其配置文件加载kernel镜像，并运行内核加载后的第一个程序/sbin/init，这个程序会根据/etc/inittab来进行初始化的工作。</li>
+<li>Linux将根据/etc/inittab中定义的系统初始化配置</li>
+<li>根据runlevel值来启动对应的服务，运行/etc/rcN.d/下的所有脚本</li>
+<li>运行/etc/rc.local</li>
+<li>生成终端或X Window来等待用户登录</li>
+<li>login shell会执行/etc/profile. 所以/etc/profile是影响所有用户的.  然后依次~/.bash_profile, ~/.bash_login , ~/.profile</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_1">第2章  Linux用户管理</h2>
+
+<ul>
+<li>超级用户 root UID=0;系统用户(apache、mysql),UID 1~499 ;普通用户 UID&gt;500</li>
+<li>/etc/passwd 存放用户信息，所有人都可读;/etc/shadow 存放用户密码，只有root可读。</li>
+<li>创建用户 <code>useradd USERNAME</code> ，可以通过-g指定所属的用户组 <code>useradd -g GROUPNAME USERNAME</code>,-d 指定该用户的根目录
+<ul>
+<li>  分配UID，将用户信息记录在/etc/passwd中，密码保存在/etc/shadow</li>
+<li>  为该用户自动创建家目录 /home/USERNAME</li>
+<li>  /etc/skel下所有的文件至/home/USERNAME/ , /etc/skel下一般存放创建新用户时默认的“配置文件”</li>
+<li>  新建一个与该用户名一样的用户组</li>
+</ul></li>
+<li>修改密码 <code>passwd</code><br/></li>
+<li>删除用户　<code>userdel</code></li>
+<li>增加用户组　<code>groupadd</code> </li>
+<li>删除用户组　<code>groupdel</code></li>
+<li>查看用户 <code>users</code>:查看当前系统有哪些用户; <code>who</code>、<code>w</code>:查询详细信息</li>
+<li><code>su</code>:切换到其它用户，默认切换到root，切换成其他用户的前提是需要知道对方的密码。</li>
+<li><code>sudo</code>：用其他用户的身份执行命令 
+<ul>
+<li>系统首先检查/etc/sudoers，判断该用户是否有执行sudo的权限，在确定有执行权限后，系统要求用户输自己的密码 </li>
+<li>sudoers文件格式 <code>USER ALL=(ALL)ALL</code> : USER这个用户（第一列）可以从任何地方登录后（第二列的ALL）执行任何人（第三列的ALL）的任何命令（第四列的ALL）。</li>
+<li>想要实现不需要输入密码就可以执行命令，可以在最后一个ALL前添加“NOPASSWD:”    <code>USER    ALL=(ALL)  NOPASSWD:/sbin/shutdown, /usr/bin/reboot</code></li>
+</ul></li>
+<li><code>at</code>: 在某一个特定的时间执行一次任务</li>
+<li><code>cron</code>: 周期性执行任务</li>
+</ul>
+
+<h2 id="toc_2">第三章  Linux文件管理</h2>
+
+<ul>
+<li><code>pwd</code>:当前所在的目录; 在每个目录下，都会固定存在两个特殊目录，分别是一个点（.）和两个点（..）的目录。一个点（.）代表的是当前目录，两个点（..）代表的是当前目录的上层目录。</li>
+<li><code>touch</code>: 创建文件,如果已经存在了这个文件，并不会修改文件的内容，但是会更新文件的创建时间属性。</li>
+<li><code>rm</code> 删除文件、目录; -r 递归删除子目录 -f 强制删除，不需要确认提示</li>
+<li><code>mv</code> 移动或重命名文件</li>
+<li><code>cat</code> 查看文件;<code>head</code> 查看文件头; <code>tail</code> 查看文件尾</li>
+<li><code>dos2unix</code> 把DOS格式的文本文件转变成UNIX下的文本文件</li>
+<li><code>mkdir</code> 创建目录，-p参数一次性创建所有目录</li>
+<li><code>cp</code> 文件和目录复制</li>
+<li>查看文件或目录的权限：ls-al </li>
+</ul>
+
+<pre><code class="language-text">[root@localhost ~]# ls -al
+total 112
+drwxr-x---  3 root root  4096 Oct  1 10:43 .
+drwxr-xr-x 24 root root  4096 Oct  1 07:42 ..
+-rw-------  1 root root  1017 Jan  2  2009 anaconda-ks.cfg
+第一列是文件类别和权限，这列由10个字符组成，第一个字符表明该文件的类型。（d:目录 -:普通文件 l:链接文件 b:快文件 c:字符文件 s:socket文件 p:管道文件）
+接下来的属性中，每3个字符为一组，第2~4个字符代表该文件所有者（user）的权限，第5~7个字符代表给文件所有组（group）的权限，第8~10个字符代表其他用户（others）拥有的权限。
+第二列代表“连接数”，除了目录文件之外，其他所有文件的连接数都是1，目录文件的连接数是该目录中包含其他目录的总个数+2
+第三列代表该文件的所有人，第四列代表该文件的所有组，第五列是该文件的大小，第六列是该文件的创建时间或最近的修改时间，第七列是文件名。
+
+</code></pre>
+
+<ul>
+<li><p>lsattr 查看文件的隐藏属性，chattr设置文件的隐藏属性</p>
+<ul>
+<li>a属性。拥有这种属性的文件只能在尾部增加数据而不能被删除。 <code>chattr +a anaconda-ks.cfg</code> 设置了a属性的文件，即便是root用户也不能删除它，但是实际上可以以尾部新增（append）的方式继续向该文件中写入内容。</li>
+<li>i属性 设置了这种属性的文件将无法写入、改名、删除，即便是root用户也不行。</li>
+</ul></li>
+<li><p>chmod: 改变文件权限,u、g、o来分别代表拥有者、拥有组、其他人，而对应的具体权限则使用rwx的组合来定义，增加权限使用+号，删除权限使用-号，详细权限使用=号</p></li>
+<li><p>chown:改变文件的拥有者</p></li>
+<li><p>chgrp:改变文件的拥有组</p></li>
+<li><p>SUID: 如果某个<strong>二进制文件</strong>的用户权限被设置了s权限，则其它用户也能以该文件的用户身份去运行这个命令。<code>chmod u+s somefile</code></p></li>
+<li><p>Sticky权限只能用于设置在目录上,设置了这种权限的目录，任何用户都可以在该目录中创建或修改文件，但是只有该文件的创建者和root可以删除自己的文件。<code>chmod o+t somedir</code></p></li>
+<li><p>umask:默认权限。</p></li>
+<li><p>file:查看文件类型 </p></li>
+<li><p>find: 查找文件; locate:数据库查找，比find更快，依赖于一个数据库文件，Linux系统默认每天会检索一下系统中的所有文件，然后将检索到的文件记录到数据库中。updatedb可以立即更新数据库</p></li>
+<li><p>which/whereis 查找执行文件</p></li>
+<li><p>tar 压缩解压文件</p></li>
+</ul>
+
+<h2 id="toc_3">第四章 Linux文件系统</h2>
+
+<h3 id="toc_4">文件系统</h3>
+
+<pre><code class="language-text">ext2文件系统：ext2文件系统也是采取将文件数据存放到数据块中的方式来存储数据的，这些数据块的大小可以在创建文件系统的时候指定，对于存放的每个文件和目录，都会有一个inode指定，文件系统中所有的inode都是使用inode表来进行记录的，一定数量的块就会组成一个块组。在ext2文件系统中，整个分区的文件系统信息都被存放在超级块中，考虑到超级块所具有的重要性，因此在每个块组的开头中都有相同的备份。ext2文件系统的弱点也是很明显的：它不支持日志功能。这很容易造成在一些情况下丢失数据，这个天然的弱点让ext2文件系统无法用于关键应用中，目前已经很少有企业使用ext2文件系统了。
+ext3文件系统: 从ext2文件系统发展而来，所以完全兼容ext2文件系统,拥有日志功能
+</code></pre>
+
+<ul>
+<li>mount: 磁盘挂载</li>
+<li>fdisk：创建文件系统</li>
+<li>硬链接:是指通过索引节点来进行链接。在Linux文件系统中，所有的文件都会有一个编号，称为inode，多个文件名指向同一索引节点是被允许的，这种链接就是硬链接。硬链接的作用是允许一个文件拥有多个有效路径名，这样用户就可以建立硬链接指向同一文件，删除一个链接并不会影响索引节点本身和其他的链接，只有当最后一个链接被删除时，文件的数据块及目录的链接才会被释放。但是 1. 不允许给目录创建硬链接； 2. 只有在同一文件系统中的文件之间才能创建链接</li>
+<li>ln src hard_link; -s 创建软连接</li>
+<li>软链接（soft link）又称符号链接（symbolic link），是一个包含了另一个文件路径名的文件，可以指向任意文件或目录，也可以跨不同的文件系统。</li>
+</ul>
+
+<h2 id="toc_5">第五章 字符处理</h2>
+
+<ul>
+<li><strong>管道</strong>是一个固定大小的缓冲区，该缓冲区的大小为1页，即4K字节。</li>
+<li><strong>grep</strong>：搜索文本
+<ul>
+<li>grep [-ivnc] &#39;需要匹配的字符&#39;  文件名</li>
+<li>#-i 不区分大小写</li>
+<li>#-c 统计包含匹配的行数</li>
+<li>#-n 输出行号</li>
+<li>#-v 反向匹配</li>
+</ul></li>
+<li><strong>sort</strong>排序 sort [-ntkr]  文件名
+<ul>
+<li>#-n 采取数字排序</li>
+<li>#-t 指定分隔符</li>
+<li>#-k 指定第几列</li>
+<li>#-r 反向排序</li>
+</ul></li>
+<li><strong>uniq</strong>删除重复内容 uniq [-ic]
+<ul>
+<li>#-i 忽略大小写</li>
+<li>#-c 计算重复行数<br/></li>
+<li>uniq命令只会对比相邻的行，如果有连续相同的若干行则删除重复内容，仅输出一行。如果相同的行非连续，则uniq命令不具备删除效果。uniq一般都需要和sort命令一起使用。</li>
+</ul></li>
+<li><strong>cut</strong> 截取文本
+<ul>
+<li>cut -f指定的列 -d&#39;分隔符&#39;; 系统中的所有用户及用户的家目录 cat /etc/passwd | cut -f1,6 -d&#39;:&#39; </li>
+<li>cut还可以打印指定的字符; cat /etc/passwd | cut -c1-5,7-10 打印出每行第1～5个字符，以及第7～10个字符的内容</li>
+</ul></li>
+<li><strong>tr</strong> 做文本转换或删除
+<ul>
+<li>cat /etc/passwd | tr &#39;[a-z]&#39; &#39;[A-Z]&#39; //把所有a转换为A b转换为B</li>
+<li> cat /etc/passwd | tr -d &#39;:&#39; //删除所有的:</li>
+</ul></li>
+<li><strong>paste</strong> 做文本合并; paste a.txt b.txt ;-d 指定在合并文件时行间的分隔符 </li>
+<li><strong>split</strong> 分割大文件 </li>
+</ul>
+
+<h2 id="toc_6">第六章 网络管理</h2>
+
+<ul>
+<li>ifconfig: 检查和配置网卡</li>
+<li> ifconfig eth0 192.168.159.130 netmask 255.255.255.0 //手工指定eth0的IP地址</li>
+<li> ifconfig eth0 down/up 手工断开/启用网卡<br/>
+```<br/>
+ifoconfig </li>
+</ul>
+
+<p>eth0      Link encap:Ethernet  HWaddr 00:16:3E:1A:C7:24<br/>
+          inet addr:172.19.9.191  Bcast:172.19.15.255  Mask:255.255.240.0<br/>
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1<br/>
+          RX packets:14073006 errors:0 dropped:0 overruns:0 frame:0<br/>
+          TX packets:10588780 errors:0 dropped:0 overruns:0 carrier:0<br/>
+          collisions:0 txqueuelen:1000<br/>
+          RX bytes:7100709998 (6.6 GiB)  TX bytes:8880189731 (8.2 GiB)</p>
+
+<p>lo        Link encap:Local Loopback<br/>
+          inet addr:127.0.0.1  Mask:255.0.0.0<br/>
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1<br/>
+          RX packets:11804717 errors:0 dropped:0 overruns:0 frame:0<br/>
+          TX packets:11804717 errors:0 dropped:0 overruns:0 carrier:0<br/>
+          collisions:0 txqueuelen:0<br/>
+          RX bytes:1845532026 (1.7 GiB)  TX bytes:1845532026 (1.7 GiB)</p>
+
+<p>eth0表示的是以太网的第一块网卡。其中eth是Ethernet的前三个字母，代表以太网，0代表是第一块网卡，第二块以太网网卡则是eth1，以此类推。Link encap是指封装方式为以太网；HWaddr是指网卡的硬件地址（MAC地址）；inet addr是指该网卡当前的IP地址；Broadcast是广播地址（这部分是由系统根据IP和掩码算出来的，一般不需要手工设置）；Mask是指掩码；UP说明了该网卡目前处于活动状态；MTU代表最大存储单元，即此网卡一次所能传输的最大分包；RX和TX分别代表接收和发送的包；collision代表发生的冲突数，如果发现值不为0则很可能网络存在故障；txqueuelen代表传输缓冲区长度大小；第二个设备是lo，表示主机的环回地址，这个地址是用于本地通信的。</p>
+
+<pre><code class="language-text">+ RedHat和CentOS系统的网络配置文件所处的目录为/etc/sysconfig/network-scripts/，eth0的配置文件为ifcfg-eth0 
+</code></pre>
+
+<p>DEVICE=eth0 //DEVICE变量定义了设备的名称<br/>
+BOOTPROTO=dhcp //BOOTPROTO变量定义了获取IP的方式<br/>
+ONBOOT=yes // ONBOOT变量定义了启动时是否激活使用该设备<br/>
+// BOOTPROTO=static<br/>
+//IPADDR=192.168.159.129<br/>
+//NETMASK=255.255.255.0</p>
+
+<pre><code class="language-text">
++ route命令添加默认网关 `route add default gw 192.168.159.2`  route–n查看系统当前的路由表
++ /etc/hosts 1. 加快域名解析,当访问网站时，系统会首先查看hosts文件中是否有记录，如果记录存在则直接解析出对应的IP，这时则不需要请求DNS服务器。  2. 方便小型局域网用户使用的内部设备,不必为此专门设置DNS服务器
++ /etc/resolv.conf: hosts文件毕竟只能做有限的主机记录，无法将所有已知的主机名记录到hosts文件中,当今几乎所有的主机都在使用DNS来解析地址.设置主机为DNS客户端的配置文件就是/etc/resolv.conf
++ **ping** ping程序的目的在于测试另一台主机是否可达
++ **host、Nslookup、dig** 用来查询DNS记录的。
++ **traceroute** 检测数据包是如何经由路由器的工具.
+
+
+## 第7章 进程管理
+
++ **ps** 查询当前运行进程的状态信息
++ **top** 实时的系统状态监控
++ **kill、killall** 终止一个进程
++ **lsof** 查询进程打开的文件(普通文件、目录、网络文件系统中的文件、字符设备、管道、socket等)
+
+</code></pre>
+
+<p>lsof ［options］ filename </p>
+
+<h1 id="toc_7">lsof filename  显示打开指定文件的所有进程</h1>
+
+<h1 id="toc_8">lsof -c COMMAND  显示COMMAND列中包含指定字符的进程所有打开的文件</h1>
+
+<h1 id="toc_9">lsof -u username  显示所属于user进程打开的文件</h1>
+
+<h1 id="toc_10">lsof -g gid 显示归属于gid的进程情况</h1>
+
+<h1 id="toc_11">lsof +d /DIR/ 显示目录下被进程打开的文件</h1>
+
+<h1 id="toc_12">lsof +D /DIR/ 同上，但是会搜索目录下的所有目录，时间相对较长</h1>
+
+<h1 id="toc_13">lsof -d FD 显示指定文件描述符的进程</h1>
+
+<h1 id="toc_14">lsof -n 不将IP转换为hostname,默认是不加-n</h1>
+
+<h1 id="toc_15">lsof -p&lt;进程号&gt; 列出指定进程号所打开的文件</h1>
+
+<h1 id="toc_16">lsof -i[46] [protocol][@hostname|hostaddr][:service|port]</h1>
+
+<pre><code class="language-text">#46指IPv4或IPv6 
+#protocol指TCP或UDP 
+#hostname指主机名 
+#hostaddr是IPv4地址 
+#service是/etc/service中的service name
+#port是端口号
+</code></pre>
+
+<pre><code class="language-text">+ `nice、renice`:调整进程优先级
+
+
+## 第8章　Linux下的软件安装
+
++ **yum** yum的全称为Yellow dog Updater，Modified，是一个基于RPM的shell前端包管理器，能够从指定的服务器上（一个或多个）自动下载并安装或更新软件、删除软件。其最大的好处是可以自动解决依赖关系。
+
+
+## 第9章　vi和vim编辑器
+
+&gt; 没什么好记录的。。。
+
+## 第10章　正则表达式
++ `.`（一个点）符号:用于匹配除换行符之外的任意一个字符。
++ `*` 符号:符号用于匹配前一个字符0次或任意多次
++ `{n,m}`: 控制字符的重复次数
++ `^` 符号: 用于匹配开头的字符
++ `$` 符号:“$”用于匹配尾部 
++ `[]` 符号: 用于匹配方括号内出现的任一字符,`^`这个符号出现在[]中，则代表取反.
++ `\` 转义字符
++ `\d` : 匹配一个数字，等价于[0-9]
++ `\b` : 匹配单词的边界 `\B`:匹配非单词的边界
++ `\w`: 匹配字母、数字和下划线，等价于[A-Za-z0-9]。 `\W`:匹配非字母、非数字、非下划线，等价于[^A-Za-z0-9]。
++ `\n` 匹配换行符 `\r`匹配回车符 `\t` 匹配制表符
++ `\s`:匹配任何空白字符，`\S`:匹配非空白字符
+
+**扩展正则表达式**
++ `?`: 用于匹配前一个字符0次或1次 
++ `+`: 用于匹配前一个字符1次以上
++ `|` “|”符号是“或”的意思，即多种可能的罗列，彼此间是一种分支关系。
+
+### grep 
+    基于正则的文本查找命令
+    
+### sed 
+    + 默认情况下，sed并不会改变原文件本身，而只是对流经sed命令的文本进行修改，并将修改后的结果打印到标准输出中，要想保存修改后的文件，必须使用重定向生成新的文件。如果想直接修改源文件本身则需要使用“-i”参数。
+    + sed处理文本时是以行为单位的，每处理完一行就立即打印出来，然后再处理下一行
+    + sed [options] &#39;command&#39; file,是sed可以接受的参数;#command是sed的命令集（一共有25个）
+    + -e 参数和分号可以连接多个命令
+     
+ **sed 应用实例：**
+     
+     1. 删除:d命令可删除指定的行。删除第一行 `sed &#39;1d&#39; Sed.txt`; 删除从N到M行 `sed &#39;N,Md&#39; Sed.txt`;删除第一行到最后行 `sed &#39;1,$d&#39; Sed.txt`;删除最后一行 `sed &#39;$d&#39; Sed.txt`;  删除所有包含Empty的行 `sed &#39;/Empty/d&#39; Sed.txt`;删除空行 ` sed &#39;/^$/d&#39; Sed.txt`
+     2. 查找替换: 使用s命令可将查找到的匹配文本内容替换为新的文本。 sed &#39;s/line/LINE/&#39; Sed.txt 使用LINE替换line，请注意每一行只有第一个line被替换了，默认情况下只替换第一次匹配到的内容。`s/line/LINE/g` 可以完成所有匹配值的替换
+    3. 字符转换: 使用y命令可进行字符转换，其作用为将一系列字符逐个地变换为另外一系列字符。该命令会将file中的O转换为N、L换为E、D转换为W#注意转换字符和被转换字符的长度要相等，否则sed无法执行 `sed  &#39;y/OLD/NEW/&#39; file`
+    4. 插入文本:使用i或a命令插入文本，其中i代表在匹配行之前插入，而a代表在匹配行之后插入。 在匹配行的上一行插入，sed &#39;/Pattern/i\Insert&#39; Sed.txt 
+    5. 读取文本，使用r命令可从其他文件中读取文本，并插入匹配行之后。 `sed  &#39;/^$/r /etc/passwd&#39; Sed.txt `
+    6. 打印: 使用p命令可进行打印，这里使用sed命令时一定要加-n参数，表示不打印没关系的行.  打印出文件中指定的行 `sed -n &#39;1p&#39; Sed.txt` 
+    7. 写文件: 想要保存文件除了使用重定向或-i参数外，还可以使用w命令将结果保存到外部指定文件。 `sed -n &#39;1,2 w output&#39; Sed.txt`
+    8. 替换匹配行的下一行： n命令,该命令的作用在于读取匹配行的下一行，然后再用n命令后的编辑指令来处理该行。
+    9. 每一行最前面加点东西,`sed &#39;s/^/#/g&#39; pets.txt`
+    10. 在每一行最后面加点东西 `sed &#39;s/$/ --- /g&#39; pets.txt`
+    11. 对匹配内容执行多条命令,对1,3行做替换操作，然后打印出替换后的内容 `sed  -n &#39;1,3{s/old/new/g;p;}&#39;  file`
+    12.  提取两个表达式之间的多行内容 sed -n &#39;/^Title1$/,/^Title2$/p&#39;
+  
+### awk
+awk则是基于列的文本处理工具，它的工作方式是按行读取文本并视为一条记录，每条记录以字段分割成若干字段，然后输出各字段的值，$1、$2分别用于表示域，$0则表示全部域。
+
++ -F 参数指定分隔符，来区分不同的域
++ 内部变量NF表示文件的列数
++ BEGIN 初始化变量 END处理结束时输出
+
+## 第11章　Shell编程概述
++ Shell是指一种命令行解释器，是为用户和操作系统之间通信提供的一种接口,它接受来自用户输入的命令，并将其转换为一系列的系统调用送到内核执行，并将结果输出给用户。
++ Shell是一门非常容易入门的语言，语法结构简单,Shell具备一定的跨平台性，使用POSIX所定义的规范，可以做到脚本无须修改就能在不同的系统中运行。
++ 脚本中的第一行“#!/bin/bash” 是在告诉系统执行这个文件需要使用某个解释器，后面的/bin/bash就是指明了解释器的具体位置。
++ “#”后面的内容为注释
++ 执行脚本时指定 -x 参数来观察脚本的运行情况，也可以借助第三方工具(bashdb)来调试脚本程序
++ Shell内建命令：
+    + type：判断一个命令是不是内建命令
+    + 执行程序：“.”（点号），点号或者source命令用于执行某个脚本，甚至脚本没有可执行权限也可以运行。
+    + alias：用于创建命令的别名，`alias ll=&#39;ls -l --color=tty&#39;`,可以将别名条目写到用户家目录中的.bashrc文件中
+    + unalias： 删除别名
+    + 任务前后台切换：bg、fg、jobs
+    + cd 改变目录 
+    + declare、typeset 用来声明变量
+    + echo 打印字符，默认加上换行符，使用-n参数可以不打印换行符
+    + eval： 将所跟的参数作为Shell的输入，并执行产生的命令
+    + exec：内建命令exec并不启动新的Shell，而是用要被执行的命令替换当前的Shell进程，并且将老进程的环境清理掉。exec典型的用法是与find联合使用，用find找出符合匹配的文件，然后交给exec处理 `find / -name &quot;*.conf&quot; -exec ls -l {} \;`
+    + exit: 退出Shell
+    + kill: 发送信号给指定PID或进程
+    + let: Shell内建的整数运算命令
+    + pwd:显示当前目录， $PWD $OLDPWD
+    + local：该命令用于在脚本中声明局部变量
+    + read： 从标准输入读取一行到变量
+    + return 定义函数返回值
+    + ulimit: 显示并设置进程资源限度
+    
+## 第12章　Bash Shell的安装
++ `/etc/shells`文件中存放系统已安装的shell。
++ chsh命令（change shell的简写）修改登录Shell，chsh命令做的工作就是修改了/etc/passwd文件中登录Shell的路径
+
+## 第13章　Shell编程基础 
++ Shell变量是一种弱类型的变量，也就是说在声明变量时并不需要指定其变量类型
++ BASH：Bash Shell的全路径。 BASH_VERSION：Bash Shell的版本。CDPATH：用于快速进入某个目录。EUID：记录当前用户的UID。
++ FUNCNAME：在用户函数体内部，记录当前函数体的函数名。
++ HISTCMD：记录下一条命令在history命令中的编号。HISTFILE：记录history命令记录文件的位置。HISTFILESIZE：设置HISTFILE文件记录命令的行数。HISTSIZE：缓冲区的大小，Linux并不会每次运行一个命令后立即将该命令记录到HISTFILE文件中，而是先放到命令缓存区中，在缓冲区满或退出Shell时才将缓冲区的记录写到HISTFILE文件中。
++ HOSTNAME：展示主机名。HOSTTYPE：展示主机的架构。MACHTYPE：主机类型的GNU标识。LANG：设置当前系统的语言环境。
++ PS1：命令提示符，默认值是[\u@\h\W]\$，其中\u是用户名、\h是主机名、\W是当前工作目录的basename、\$是用户UID的替换字符：如果UID是0则替换成“#”，否则替换成“\$”，所以此处具体显示出来就是“[root@localhost~]#”
++ 变量命名：必须以字母或者下划线开头，后面可以跟数字、字母和下划线，变量长度没有限制，Shell的变量是区分大小写的
++ 变量赋值：name=john **变量名和变量值之间用等号紧紧相连，之间没有任何空格，如果不注意，等号任何一边出现空格就会出错，当变量中有空格时必须用引号括起，否则会出现错误**
++ 变量取值：只需要在变量名前加上$符号既可，严谨一点的写法是${}
++ 取消变量：unset 
++ 特殊变量
+    + 位置参数：脚本本身为$0，第一个参数为$1，第二个参数为$2，第三个为$3。。。\$#表示脚本参数的个数总和，\$@或\$*表示脚本的所有参数。
+    + $?： 脚本或命令返回值，Linux中规定正常退出的命令和脚本应该以0作为其返回值，任何非0的返回值都表示命令未正确退出或未正常执行。
+    + $$    当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。 
+    
++ 数组： 
+    定义： declare -a Array  #定义名为Array的索引数组   declare -a Name=(&#39;john&#39; &#39;sue&#39;) # 数组还可以在创建的同时赋值 
+    数组取值: \${数组名[索引]}。\${Array[@]} \${Array[*]} 可以一次性取出所有值
+    数组长度： 利用“@”或“*”字符，可以将数组扩展成列表，然后使用“#”来获取数组元素的个数  echo \${#Array[@]}。echo \${#Array[2]} 如果某个元素是字符串，还可以通过指定索引的方式获得该元素的长度。
+    数组截取： 可以截取某个元素的一部分，对象可以是整个数组或某个元素。echo \${Array[@]:1:2} 
+    连接数组：将若干个数组进行拼接操作  Conn=(\${Array[@]} \${Name[@]})
+    替换元素：将数组内某个元素的值替换成其他值。Array=(\${Array[@]/HelloWorld/HelloJohn})
++ 只读变量： 只读变量又称常量，是通过readonly内建命令创建的变量，在声明时就要求赋值，并且之后无法修改。使用declare-r也可以声明只读变量。`readonly RO=100`
++ 变量的作用域:在Linux系统中，不同进程ID的Shell默认为一个不同的命名空间,同名变量在两个不同命名空间中是互不影响的.Shell变量的作用域是在本Shell内,在函数内部声明的临时变量需要用local指定其为只在函数内生效的“局部变量”，这样这些变量将只存在于局部的命名空间内，从而不会对全局变量有影响。
++ 转义和引用:Shell中的转义符是反斜线“\”,在双引号中的\$符、反引号、转义符还是会被解析成其特殊含义，而在单引号中所有的字符都只是字面意思。
++ 命令替换：命令替换是指将命令的标准输出作为值赋给某个变量。Shell中有两种方式可以完成命令替换，一种是反引号（\`），一种是\$()。**DATE_01=\`date\`   DATE_02=\$(date)**
++ 运算符:常见的算术运算大多需要结合Shell的内建命令let来使用,Shell只支持整数计算，也就,是所有可能产生小数的运算都会舍去小数部分。
++ expr: expr命令也可用于整数运算,expr要求操作数和操作符之间使用空格隔开,expr支持的算术运算符有加、减、乘、除、余等
++ \$[]和\$(())类似，可用于简单的算术运算
++ \$((算术表达式)),其中的算术表达式由变量和运算符组成，常见的用法是显示输出和变量赋值。 echo \$((2*i+1)) 变量i前并没有$符.
++ 通配符:*代表任意长度的字符串,问号（?）可用于匹配任一单个字符.
+
+
+## 第14章　测试和判断
++ 测试
+    + 测试的第一种使用方式是直接使用test命令，test expression，然后根据$?是否返回0来判断是否成功。
+    + 第二种测试方式是使用“[”启动一个测试，再写expression，再以“]”结束测试，**左边的括号“[”后有个空格，右括号“]”前面也有个空格，如果任意一边少了空格都会造成Shell报错**。
+    + 文件测试 ：
+        + -e FILE ：文件或者目录存在时返回真。
+        + -d FILE： 文件存在并且是个目录时返回真。
+        + -f FILE： 文件存在并且为普通文件。
+        + -x FILE： 文件存在并且可以执行。
+        + -r FILE： 文件存在并且可读。
+        + -w FILE： 文件存在并且可写。
+    + 字符串测试：
+        + -z &quot;STR&quot;: STR为空时返回真
+        + -n &quot;STR&quot;: STR非空时返回真
+        + &quot;string1&quot;=&quot;string2&quot;
+        + &quot;string1&quot;!=&quot;string2&quot;
+    + 整数比较：
+        + &quot;num1&quot; -eq &quot;num2&quot;
+        + &quot;num1&quot; -gt &quot;num2&quot;
+        + &quot;num1&quot; -lt &quot;num2&quot;
+        + &quot;num1&quot; -ge &quot;num2&quot;
+        + &quot;num1&quot; -le &quot;num2&quot;
+        + &quot;num1&quot; -ne &quot;num2&quot;
+    + 逻辑测试: 用于连接多个测试条件，并返回整个表达式的值。
+        + ! expression
+        + expression1 -a expression2 :同时为真 ===&gt; 等同 &amp;&amp;
+        + expression1 -0 expression2 :有一个为真 ====&gt; 等同 ||
++ 判断
+    1. if判断
+    ```
+    if expression; then
+　　　command 
+    fi
+    
+    if expression; then
+        command
+    else
+            command
+    fi
+    
+    if expression1; then
+        command1
+    else
+            if  expression2; then
+                          command2
+            else
+                          command3
+            fi
+    fi
+    ```
+    2. case判断 
+    ```
+    case VAR in
+    var1) command1 ;;
+    var2) command2 ;;
+    var3) command3 ;;
+    ...
+    *) command ;;
+    esac
+    //case判断结构中的var1、var2、var3等这些值只能是常量或正则表达式。
+    ```
+    
+##   第15章　循环
++ for循环
+    - 带列表的for循环
+    ```
+        for VARIABLE in (list)
+        do
+                command
+        done
+        
+        将列表定义到一个变量中，以后有任何修改只需要修改该变量即可
+        fruits=&quot;apple orange banana pear&quot;
+        for FRUIT in ${fruits}
+        do
+               echo &quot;$FRUIT is John&#39;s favorite&quot;
+        done
+        echo &quot;No more fruits&quot;
+    
+    
+        for VAR in {1..5}
+        do
+              echo &quot;Loop $VAR times&quot;
+        done
+        
+        可以使用seq命令结合命令替换的方式生成列表
+        
+        sum=0
+        for VAR in `seq 1 100`
+        #for VAR in $(seq 1 100)
+        do
+              let &quot;sum+=VAR&quot;
+        done
+        echo &quot;Total: $sum&quot;
+        
+        //$(seq 1 2 100) 
+    ```
+
+    + 类C的for循环
+    
+    ```
+    for ((expression1; expression2; expression3))
+    do
+           command
+    done
+    
+    for ((i=1; i&lt;=10; i++))
+    do
+            echo -n &quot;$i &quot;
+    done
+    
+    ```
++ while循环
+    + 和for循环一样，while循环也是一种运行前测试语句
+    ``` 
+        while expression
+        do
+                command
+        done
+    ```  
+
+    + 使用while按行读取文件
+    
+</code></pre>
+
+<pre><code class="language-text">while read LINE
+do
+        NAME=`echo $LINE | awk &#39;{print $1}&#39;`
+        AGE=`echo $LINE | awk &#39;{print $2}&#39;`
+        Sex=`echo $LINE | awk &#39;{print $3}&#39;`
+        echo &quot;My name is $NAME, I&#39;m $AGE years old, I&#39;m a $Sex&quot;
+done
+</code></pre>
+
+<pre><code class="language-text">+ until循环
+</code></pre>
+
+<pre><code class="language-text">until expression
+do
+       command
+done
+</code></pre>
+
+<pre><code class="language-text">+ select循环    
+
+</code></pre>
+
+<p>select MENU in (list)<br/>
+do<br/>
+       command<br/>
+done</p>
+
+<p>当程序运行到select语句时，会自动将列表中的所有元素生成为可用1、2、3等数选择的列表，并等待用户输入。用户输入并回车后，select可判断输入并执行后续命令。</p>
+
+<pre><code class="language-text">
++ 循环控制
+    - break用于终止当前整个循环体。一般情况下，break都是和if判断语句一起使用的，当if条件满足时使用break终止循环。
+    - continue语句 continue语句用于结束当前循环转而进入下一次循环
+    
+## 第16章　函数
+
+</code></pre>
+
+<h1 id="toc_17">省略关键字function效果一致</h1>
+
+<p>function FUNCTION_NAME(){<br/><br/>
+        command1 #函数体中可以有多个语句，不允许有空语句<br/>
+        command2<br/>
+        ...<br/>
+}</p>
+
+<h1 id="toc_18">函数调用 FUNCTION_NAME不需要加小括号</h1>
+
+<p>FUNCTION_NAME #调用函数</p>
+
+<pre><code class="language-text">
+## 第17章　重定向
+
+文件标识符是重定向中很重要的一个概念，Linux使用0到9的整数指明了与特定进程相关的数据流，系统在启动一个进程的同时会为该进程打开三个文件：标准输入（stdin）、标准输出（stdout）、标准错误输出（stderr），分别用文件标识符0、1、2来标识。如果要为进程打开其他的输入输出，则需要从整数3开始标识。默认情况下，标准输入为键盘，标准输出和错误输出为显示器。
+
+1. 标准输出覆盖重定向：&gt;，如果指定的重定向文件不存在，则命令会先创建这个文件，如果文件存在且内容不为空，则原文件内容将被全部清空。
+    +  标准输出覆盖重定向其实是默认将文件标识符为1的内容重定向到指定文件中 ls -l /usr/ &gt; ls_usr.txt ==&gt; ls -l /usr/ 1&gt; ls_usr.txt
+    +  命令由于各种原因出错时所产生的错误输出，其文件标识符为2，而标准错误的输出默认也是显示器。所以我们可以通过指定将文件标识符为2的内容重定向到指定文件，这样错误输出就不会出现在显示器上了。
+2.标准输出追加重定向：&gt;&gt; 如果指定的重定向文件存在且内容不为空，重定向并不会清空原文件内容，而是将命令的输出新增到原文件的尾部。
+3. 标识输出重定向：&gt;&amp;  标识输出重定向的作用是将一个标识的输出重定向到另一个标识的输入。
+4. 标准输入重定向：&lt;
+5.管道：|  管道也是一种重要的I/O重定向方法,简单地说管道就是将一个命令的输出作为另一个命令的输入
+6. Here Document 用于在命令或脚本中按行输入文本。 Here Document的格式为`&lt;&lt;delimiter`，其中delimiter是一个用于标注的“分隔符”，该分隔符后所有的输入都被当作是输入的文本，直到出现下一个分隔符为止。
+
+## 调试 
+
+set 
+
+-n 只读取shell脚本，但不实际执行
+-x 进入跟踪方式，显示所执行的每一条命令
+-c &quot;string&quot; 从strings中读取命令
+</code></pre>
+
+                  </article>
+                  <div class="comments-wrap">
+                    <div class="share-comments">
+                      
+
+                      
+
+                      
+                    </div>
+                  </div><!-- end comments wrap -->
+              </div>
+            </div><!-- end columns -->
+      </div><!-- end container -->
+    </section>
+
+
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+              Copyright &copy; 2019
+              Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+              Theme used <a target="_blank" href="https://bulma.io/">Bulma CSS</a>.
+          </p>
+        </div>
+      </footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+
+  
+    
+
+
+
+
+  </body>
+</html>
